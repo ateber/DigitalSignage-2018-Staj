@@ -157,24 +157,19 @@ namespace osVodigiWeb6x.Controllers
 
             SelectListItem sortitem1 = new SelectListItem();
             sortitem1.Text = "URL Address Name";
-            sortitem1.Value = "UrlAddressName";
+            sortitem1.Value = "UrlAddressName"; 
 
             SelectListItem sortitem2 = new SelectListItem();
-            sortitem2.Text = "Zoom";
-            sortitem2.Value = "Zoom";
+            sortitem2.Text = "Tags";
+            sortitem2.Value = "Tags";
 
             SelectListItem sortitem3 = new SelectListItem();
-            sortitem3.Text = "Tags";
-            sortitem3.Value = "Tags";
-
-            SelectListItem sortitem4 = new SelectListItem();
-            sortitem4.Text = "Is Active";
-            sortitem4.Value = "IsActive";
+            sortitem3.Text = "Is Active";
+            sortitem3.Value = "IsActive";
 
             sortitems.Add(sortitem1);
             sortitems.Add(sortitem2);
-            sortitems.Add(sortitem3);
-            sortitems.Add(sortitem4);
+            sortitems.Add(sortitem3); 
 
             return sortitems;
         }
@@ -228,7 +223,7 @@ namespace osVodigiWeb6x.Controllers
         //
         // POST: /URLAddress/Upload
         [HttpPost]
-        public ActionResult Upload( URLAddress urlAddress)
+        public ActionResult Upload(URLAddress urlAddress)
         {
             try
             {
@@ -277,8 +272,7 @@ namespace osVodigiWeb6x.Controllers
         {
             URLAddress UrlAddress = new URLAddress() {
                 UrlAddressID = 0,
-                AccountID = 0,
-                Zoom = 1,
+                AccountID = 0, 
                 UrlAddressName = String.Empty,
                 Tags = String.Empty,
                 UrlAddressSource = String.Empty,

@@ -201,7 +201,8 @@ namespace osVodigiPlayer
                               WebShowID = Convert.ToInt32(WebShowUrlAddressXRef.Attribute("WebShowID").Value),
                               PlayOrder = Convert.ToInt32(WebShowUrlAddressXRef.Attribute("PlayOrder").Value),
                               URLAddressID= Convert.ToInt32(WebShowUrlAddressXRef.Attribute("URLAddressID").Value),
-                              WebShowURLAddressXRefID =   Convert.ToInt32(WebShowUrlAddressXRef.Attribute("WebShowURLAddressXRefID").Value)
+                              WebShowURLAddressXRefID =   Convert.ToInt32(WebShowUrlAddressXRef.Attribute("WebShowURLAddressXRefID").Value),
+                              Zoom= Convert.ToInt32(WebShowUrlAddressXRef.Attribute("Zoom").Value),
                           }
                     ).ToList();
                     WebShowUrlAddressXRefs = wss;
@@ -217,8 +218,7 @@ namespace osVodigiPlayer
                            select new URLAddress
                            {
                                URLAddressID = Convert.ToInt32(URLAddress.Attribute("URLAddressID").Value),
-                               URLAddressSource = Utility.DecodeXMLString(Convert.ToString(URLAddress.Attribute("URLAddressSource").Value)),
-                               Zoom = Convert.ToInt32(URLAddress.Attribute("Zoom").Value),
+                               URLAddressSource = Utility.DecodeXMLString(Convert.ToString(URLAddress.Attribute("URLAddressSource").Value)), 
                                URLAddressName = Utility.DecodeXMLString(Convert.ToString(URLAddress.Attribute("URLAddressName").Value)),
                                AccountID= Convert.ToInt32(URLAddress.Attribute("AccountID").Value),
                                IsActive= Convert.ToBoolean(URLAddress.Attribute("IsActive").Value),

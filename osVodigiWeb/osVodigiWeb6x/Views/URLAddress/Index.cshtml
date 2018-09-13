@@ -93,19 +93,19 @@
                         <td class="gridcell" rowspan="2" style="vertical-align:middle;text-align:center;width:100px;"> 
                             <img id="imgsmallpreview" class="gridpreview" alt="url-icon" style="height:40px;" src="~/Images/urls-icon.png"    />
                         </td>
-                        <td class="gridcell" style="width:175px;color:#315581;text-align:right;"><b>URL Address Name:</b></td>
+                        <td class="gridcell" style="width:160px;color:#315581;text-align:right;"><b>URL Address Name:</b></td>
                         <td class="gridcell" style="width:185px;"><b>@Html.DisplayFor(modelItem => item.UrlAddressName)</b></td>
-                        <td class="gridcell" style="width:175px;color:#315581;text-align:right;"><b>Active:</b></td>
-                        <td class="gridcell" style="width:185px;">@Html.DisplayFor(modelItem => item.IsActive)</td>
-                        <td class="gridcell" rowspan="2" style="width:100px;">
+                        <td class="gridcell" style="width:60px;color:#315581;text-align:right;"><b>Active:</b></td>
+                        <td class="gridcell" style="width:100px;">@Html.DisplayFor(modelItem => item.IsActive)</td>
+                        <td class="gridcell" rowspan="2" style="width:50px;">
                             <div class="gridlinkdiv"><span id="gridlink">@Html.ActionLink("Edit", "Edit", new { id = item.UrlAddressID })</span></div>
                         </td>
                     </tr>
-                    <tr>
-                        <td class="gridcell" style="color:#315581;text-align:right;"><b>Zoom Value:</b></td>
-                        <td class="gridcell">@Html.DisplayFor(modelItem => item.Zoom)</td>
-                        <td class="gridcell" style="color:#315581;text-align:right;"><b>Tags:</b></td>
-                        <td class="gridcell">@Html.DisplayFor(modelItem => item.Tags)</td>
+                    <tr >
+                        <td class="gridcell" style="width:160px;color:#315581;text-align:right;"><b>URL Address Source:</b></td>
+                        <td class="gridcell" > <a target="_blank" href="@Html.DisplayFor(modelItem => item.UrlAddressSource)" style="display:block;word-wrap:break-word;width:400px;">@Html.DisplayFor(modelItem => item.UrlAddressSource)  </a></td>
+                        <td class="gridcell" style="width:60px;color:#315581;text-align:right;"><b>Tags:</b></td>
+                        <td class="gridcell" style="width:100px;">@Html.DisplayFor(modelItem => item.Tags)</td>
                     </tr>
                 </table>
             </div>

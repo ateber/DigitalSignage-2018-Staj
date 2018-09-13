@@ -12,5 +12,6 @@ namespace osVodigiPlayer.Data
         public int WebShowID { get; set; } 
         public int URLAddressID { get; set; } 
         public int PlayOrder { get; set; }
+        public int Zoom { get; set; }
     }
 }

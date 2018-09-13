@@ -15,6 +15,12 @@
     function SaveClick() {
         $("#divProgressBar").show();
         $("#btnSave").enabled = false;
+    } 
+    function ViewClick() {
+        var $url = $("#UrlAddressSource").val(); 
+        var $link = $('#buttonView');    
+            $link.attr('href', $url);    
+      
     }
 </script>
 
@@ -44,7 +50,10 @@
                     <b>Input URL Address: <span class="required">*</span></b>
                 </td>
                 <td class="formprimary">
-                    @Html.TextBoxFor(model => model.UrlAddressSource, new { @style = "width:300px;", maxlength = 128 })
+                    @Html.TextBoxFor(model => model.UrlAddressSource, new { @style = "width:300px;"  })
+                </td>
+                <td class="formprimary">
+                    <a id="buttonView" href="#" target="_blank" onclick="ViewClick();" class="button">Go To Web Site</a>
                 </td>
             </tr>
             <tr>
@@ -64,13 +73,7 @@
                 <td class="formsecondary">
                     @Html.EditorFor(model => model.IsActive)
                 </td>
-            </tr>
-            <tr>
-                <td class="formprimary"><b>Zoom: </b></td>
-                <td class="formprimary">
-                    @Html.TextBoxFor(model => model.Zoom, new { @style = "width:300px;", maxlength = 128 }) 
-                </td>
-            </tr>
+            </tr> 
             <tr>
                 <td class="formfooter" colspan="2"><div id="returnlink"><input type="submit" value="Save" style="width:75px;" onclick="SaveClick();" />@Html.ActionLink("Back to List", "Index")</div></td>
             </tr>
@@ -84,5 +87,5 @@
             <br />
             <div class="errormessage">@Html.Raw((string)ViewData["ValidationMessage"])</div>
 }
-
+ 
 <br /><br />

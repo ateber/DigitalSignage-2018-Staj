@@ -11,8 +11,7 @@ namespace osVodigiPlayer.Data
         public int URLAddressID { get; set; }
         public string URLAddressSource{ get; set; }
         public string URLAddressName { get; set; }
-        public int AccountID { get; set; }
-        public int Zoom { get; set; }
+        public int AccountID { get; set; } 
         public string Tags { get; set; }
         public bool IsActive { get; set; } 
     }

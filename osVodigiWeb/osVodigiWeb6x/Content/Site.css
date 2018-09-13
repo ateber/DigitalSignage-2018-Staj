@@ -1,4 +1,27 @@
-﻿body {
+﻿.button { 
+  text-align: center;
+  cursor: pointer;
+  outline: none;
+  color: #fff;
+  background-color: #4CAF50;
+  border: none;
+  border-radius: 15px;
+  box-shadow: 0 3px #999;
+}
+
+.button:hover {background-color: #3e8e41}
+
+.button:active {
+  background-color: #3e8e41;
+  box-shadow: 0 3px #666;
+  transform: translateY(1px);
+}
+
+
+/* ----- sınır s------------------------------------- */
+
+
+body {
     background-color: #F2F2F2;
     font-size: 12px;
     font-family: Verdana, Arial;
@@ -379,6 +402,7 @@ td.gridheader
 
 td.gridcell
 {
+     
     padding: 3px 3px 3px 3px;
     vertical-align: top;
     text-align: left;
@@ -389,7 +413,7 @@ td.gridprimary
     padding: 3px 3px 3px 3px;
     background-color: #FFFFFF;
     vertical-align: middle;
-    text-align: left;
+    text-align: left;   
 }
 
 td.gridsecondary

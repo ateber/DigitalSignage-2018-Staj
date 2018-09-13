@@ -12,9 +12,9 @@ DEBUG;TRACE
 C:\Users\ThekME\Desktop\SourceCode\osVodigiPlayer\osVodigiPlayer\App.xaml
 22585253737
 
-76849218966
+72-1092804775
 22454510061
 MainWindow.xaml;UserControls\ucMultiScreen.xaml;UserControls\ucDownload.xaml;UserControls\ucPlayList.xaml;UserControls\ucRegister.xaml;UserControls\ucResetPlayer.xaml;UserControls\ucSchedule.xaml;UserControls\ucSelection.xaml;UserControls\ucSelectionBar.xaml;UserControls\ucSettings.xaml;UserControls\ucSlideShowDropFromTop.xaml;UserControls\ucSlideShowFader.xaml;UserControls\ucSlideShowPanZoom.xaml;UserControls\ucSlideShowSlideFromRight.xaml;UserControls\ucSlideShowZoomIn.xaml;UserControls\ucSplash.xaml;UserControls\ucSurvey.xaml;UserControls\ucTimeline.xaml;UserControls\ucWeather.xaml;UserControls\ucWeb.xaml;UserControls\ucWebservice.xaml;UserControls\ucWebViewer.xaml;
 
-True
+False
 
