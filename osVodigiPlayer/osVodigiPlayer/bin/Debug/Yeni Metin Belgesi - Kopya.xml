@@ -1,0 +1,156 @@
+<xml>
+	<PlayerGroupSchedules>
+		<PlayerGroupSchedule PlayerGroupScheduleID="1000077" PlayerGroupID="1000000" ScreenID="1000010" Day="0" Hour="0" Minute="0"  />
+		<PlayerGroupSchedule PlayerGroupScheduleID="1000078" PlayerGroupID="1000000" ScreenID="1000010" Day="1" Hour="0" Minute="0"  />
+		<PlayerGroupSchedule PlayerGroupScheduleID="1000079" PlayerGroupID="1000000" ScreenID="1000010" Day="2" Hour="0" Minute="0"  />
+		<PlayerGroupSchedule PlayerGroupScheduleID="1000080" PlayerGroupID="1000000" ScreenID="1000010" Day="3" Hour="0" Minute="0"  />
+		<PlayerGroupSchedule PlayerGroupScheduleID="1000081" PlayerGroupID="1000000" ScreenID="1000010" Day="4" Hour="0" Minute="0"  />
+		<PlayerGroupSchedule PlayerGroupScheduleID="1000082" PlayerGroupID="1000000" ScreenID="1000010" Day="5" Hour="0" Minute="0"  />
+		<PlayerGroupSchedule PlayerGroupScheduleID="1000083" PlayerGroupID="1000000" ScreenID="1000010" Day="6" Hour="0" Minute="0"  />
+	</PlayerGroupSchedules>
+	<Screens>
+		<Screen ScreenID="1000008" AccountID="1000000" ScreenName="Example PlayList" MultiScreenID="0" WebShowID="0" SlideShowID="0" PlayListID="1000000" TimelineID="0" IsInteractive="false" ButtonImageID="0"  />
+		<Screen ScreenID="1000101" AccountID="1000000" ScreenName="Omer abi Video" MultiScreenID="0" WebShowID="0" SlideShowID="0" PlayListID="1000001" TimelineID="0" IsInteractive="false" ButtonImageID="0"  />
+		<Screen ScreenID="1000007" AccountID="1000000" ScreenName="Example Timeline" MultiScreenID="0" WebShowID="0" SlideShowID="0" PlayListID="0" TimelineID="1000000" IsInteractive="false" ButtonImageID="0"  />
+		<Screen ScreenID="1000100" AccountID="1000000" ScreenName="Omer Abi resim" MultiScreenID="0" WebShowID="0" SlideShowID="1000001" PlayListID="0" TimelineID="0" IsInteractive="false" ButtonImageID="1000000"  />
+		<Screen ScreenID="1000001" AccountID="1000000" ScreenName="Visit Las Vegas" MultiScreenID="0" WebShowID="0" SlideShowID="1000000" PlayListID="0" TimelineID="0" IsInteractive="false" ButtonImageID="1000000"  />
+		<Screen ScreenID="1000010" AccountID="1000000" ScreenName="multi screen" MultiScreenID="1000000" WebShowID="0" SlideShowID="0" PlayListID="0" TimelineID="0" IsInteractive="false" ButtonImageID="1000000"  />
+		<Screen ScreenID="1000000" AccountID="1000000" ScreenName="web sites" MultiScreenID="0" WebShowID="1000000" SlideShowID="0" PlayListID="0" TimelineID="0" IsInteractive="false" ButtonImageID="1000000"  />
+	</Screens>
+	<MultiScreenXrefs>
+		<MultiScreenXref MultiScreenXrefID="1000000" MultiScreenID="1000000" ScreenID="1000000" PosX="0" PosY="0" Height="350" Width="650" />	 
+		<MultiScreenXref MultiScreenXrefID="1000001" MultiScreenID="1000000" ScreenID="1000100" PosX="0" PosY="350" Height="350" Width="650" /> 
+		<MultiScreenXref MultiScreenXrefID="1000002" MultiScreenID="1000000" ScreenID="1000101" PosX="650" PosY="0" Height="350" Width="650" />
+		<MultiScreenXref MultiScreenXrefID="1000003" MultiScreenID="1000000" ScreenID="1000007" PosX="650" PosY="350" Height="350" Width="650" />  
+	</MultiScreenXrefs>
+	<MultiScreens>
+		<MultiScreen MultiScreenID="1000000" ScreenHeight="768" ScreenWidth="1366"  /> 
+	</MultiScreens>
+	<ScreenScreenContentXrefs>
+		<ScreenScreenContentXref ScreenScreenContentXrefID="1000032" ScreenID="1000001" ScreenContentID="1000000" DisplayOrder="1"	/>
+		<ScreenScreenContentXref ScreenScreenContentXrefID="1000033" ScreenID="1000001" ScreenContentID="1000001" DisplayOrder="2"  />
+		<ScreenScreenContentXref ScreenScreenContentXrefID="1000034" ScreenID="1000001" ScreenContentID="1000002" DisplayOrder="3"  />
+		<ScreenScreenContentXref ScreenScreenContentXrefID="1000035" ScreenID="1000001" ScreenContentID="1000003" DisplayOrder="4"  />
+		<ScreenScreenContentXref ScreenScreenContentXrefID="1000036" ScreenID="1000001" ScreenContentID="1000020" DisplayOrder="5"  />
+	</ScreenScreenContentXrefs>
+	<ScreenContents>
+		<ScreenContent ScreenContentID="1000000" ScreenContentTypeID="1000000" ScreenContentTypeName="Image" ScreenContentName="Vegas 01 Image" ScreenContentTitle="Las Vegas Is badly!" ThumbnailImageID="1000001" CustomField1="1000001" CustomField2="" CustomField3="" CustomField4=""  />
+		<ScreenContent ScreenContentID="1000001" ScreenContentTypeID="1000000" ScreenContentTypeName="Image" ScreenContentName="Vegas 02 Image" ScreenContentTitle="Visit Las Vegas!" ThumbnailImageID="1000002" CustomField1="1000002" CustomField2="" CustomField3="" CustomField4=""  />
+		<ScreenContent ScreenContentID="1000002" ScreenContentTypeID="1000000" ScreenContentTypeName="Image" ScreenContentName="Vegas 03 Image" ScreenContentTitle="There&apos;s so much to do in Vegas!" ThumbnailImageID="1000003" CustomField1="1000003" CustomField2="" CustomField3="" CustomField4=""  />
+		<ScreenContent ScreenContentID="1000003" ScreenContentTypeID="1000000" ScreenContentTypeName="Image" ScreenContentName="Vegas 04 Image" ScreenContentTitle="Good times, day or night!" ThumbnailImageID="1000004" CustomField1="1000004" CustomField2="" CustomField3="" CustomField4=""  />
+		<ScreenContent ScreenContentID="1000020" ScreenContentTypeID="1000004" ScreenContentTypeName="Web Site" ScreenContentName="website" ScreenContentTitle="web" ThumbnailImageID="1000000" CustomField1="https://www.google.com/" CustomField2="" CustomField3="" CustomField4=""  />
+	</ScreenContents>
+	<Surveys></Surveys>
+	<SurveyQuestions></SurveyQuestions>
+	<SurveyQuestionOptions></SurveyQuestionOptions>	 
+	<WebShows>
+	    <WebShow WebShowID="1000000" IntervalInSecs="10" TransitionType="Fade"   />
+	</WebShows>
+	<WebShowURLAddressXRefs>
+	    <WebShowURLAddressXRef WebShowURLAddressXRefID="1000000" WebShowID="1000000" UrlAddressID="1000000" PlayOrder="1"  />
+	    <WebShowURLAddressXRef WebShowURLAddressXRefID="1000001" WebShowID="1000000" UrlAddressID="1000001" PlayOrder="2"  />
+	</WebShowURLAddressXRefs>	
+	<URLAddresses>
+		<URLAddress URLAddressID="1000000" URLAddressSource="https://demos.devexpress.com/Dashboard/?mode=viewer&amp;dashboardId=EnergyConsumption&amp;dashboardState=%7B%22Parameters%22%3A%7B%22Year%22%3A2009%7D%2C%22Items%22%3A%7B%22mapProduction%22%3A%7B%22MasterFilterValues%22%3A%5B%5B39%2C22%5D%5D%7D%7D%7D" UrlAddressName="Google" Zoom="1"/>
+		<URLAddress URLAddressID="1000001" URLAddressSource="https://demos.devexpress.com/Dashboard/?mode=viewer&amp;dashboardId=SalesOverview" UrlAddressName="Facebook" Zoom="1"/> 
+	</URLAddressses> 
+	<Timelines>
+		<Timeline TimelineID="1000000" DurationInSecs="5" MuteMusicOnPlayback="true"  />
+	</Timelines>
+	<TimelineImageXrefs>
+		<TimelineImageXref TimelineImageXrefID="1000025" TimelineID="1000000" ImageID="1000001" DisplayOrder="1"  />
+		<TimelineImageXref TimelineImageXrefID="1000026" TimelineID="1000000" ImageID="1000002" DisplayOrder="2"  />
+		<TimelineImageXref TimelineImageXrefID="1000027" TimelineID="1000000" ImageID="1000003" DisplayOrder="3"  />
+		<TimelineImageXref TimelineImageXrefID="1000028" TimelineID="1000000" ImageID="1000004" DisplayOrder="4"  />
+	</TimelineImageXrefs>
+	<TimelineMusicXrefs>
+		<TimelineMusicXref TimelineMusicXrefID="1000018" TimelineID="1000000" MusicID="1000000" PlayOrder="1"  />
+		<TimelineMusicXref TimelineMusicXrefID="1000019" TimelineID="1000000" MusicID="1000001" PlayOrder="2"  />
+		<TimelineMusicXref TimelineMusicXrefID="1000020" TimelineID="1000000" MusicID="1000002" PlayOrder="3"  />
+	</TimelineMusicXrefs>
+	<TimelineVideoXrefs>
+		<TimelineVideoXref TimelineVideoXrefID="1000001" TimelineID="1000000" VideoID="1000000" DisplayOrder="5"  />
+	</TimelineVideoXrefs>
+	<SlideShows>
+		<SlideShow SlideShowID="1000000" IntervalInSecs="10" TransitionType="Fade"  />
+		<SlideShow SlideShowID="1000001" IntervalInSecs="10" TransitionType="Fade"  />
+	</SlideShows>
+	<SlideShowImageXrefs>
+		<SlideShowImageXref SlideShowImageXrefID="1000029" SlideShowID="1000000" ImageID="1000001" PlayOrder="1"  />
+		<SlideShowImageXref SlideShowImageXrefID="1000030" SlideShowID="1000000" ImageID="1000002" PlayOrder="2"  />
+		<SlideShowImageXref SlideShowImageXrefID="1000031" SlideShowID="1000000" ImageID="1000003" PlayOrder="3"  />
+		<SlideShowImageXref SlideShowImageXrefID="1000032" SlideShowID="1000000" ImageID="1000004" PlayOrder="4"  />
+		<SlideShowImageXref SlideShowImageXrefID="1000100" SlideShowID="1000001" ImageID="1000010" PlayOrder="1"  /> 
+		<SlideShowImageXref SlideShowImageXrefID="1000101" SlideShowID="1000001" ImageID="1000011" PlayOrder="2"  />
+		<SlideShowImageXref SlideShowImageXrefID="1000102" SlideShowID="1000001" ImageID="1000012" PlayOrder="3"  />
+		<SlideShowImageXref SlideShowImageXrefID="1000103" SlideShowID="1000001" ImageID="1000013" PlayOrder="4"  />
+		<SlideShowImageXref SlideShowImageXrefID="1000104" SlideShowID="1000001" ImageID="1000014" PlayOrder="5"  />
+		<SlideShowImageXref SlideShowImageXrefID="1000105" SlideShowID="1000001" ImageID="1000015" PlayOrder="6"  />
+		<SlideShowImageXref SlideShowImageXrefID="1000106" SlideShowID="1000001" ImageID="1000016" PlayOrder="7"  />
+		<SlideShowImageXref SlideShowImageXrefID="1000107" SlideShowID="1000001" ImageID="1000018" PlayOrder="8"  />
+		<SlideShowImageXref SlideShowImageXrefID="1000108" SlideShowID="1000001" ImageID="1000019" PlayOrder="9"  />
+		<SlideShowImageXref SlideShowImageXrefID="1000109" SlideShowID="1000001" ImageID="1000020" PlayOrder="10"  />
+		<SlideShowImageXref SlideShowImageXrefID="1000110" SlideShowID="1000001" ImageID="1000021" PlayOrder="11"  />
+		<SlideShowImageXref SlideShowImageXrefID="1000111" SlideShowID="1000001" ImageID="1000022" PlayOrder="12"  />
+		<SlideShowImageXref SlideShowImageXrefID="1000112" SlideShowID="1000001" ImageID="1000023" PlayOrder="13"  />
+		<SlideShowImageXref SlideShowImageXrefID="1000113" SlideShowID="1000001" ImageID="1000024" PlayOrder="14"  />
+		<SlideShowImageXref SlideShowImageXrefID="1000114" SlideShowID="1000001" ImageID="1000025" PlayOrder="15"  />
+		<SlideShowImageXref SlideShowImageXrefID="1000115" SlideShowID="1000001" ImageID="1000026" PlayOrder="16"  />
+	</SlideShowImageXrefs>
+	<SlideShowMusicXrefs></SlideShowMusicXrefs>	
+	<Images>
+		<Image ImageID="1000000" StoredFilename="6f5e187f-52a2-4799-bdac-2e9199580b98.png" ImageName="Visit Las Vegas Button"  />
+		<Image ImageID="1000001" StoredFilename="60255096-6a72-409e-b905-4d98ee717bb0.jpg" ImageName="Vegas 01"  />
+		<Image ImageID="1000002" StoredFilename="612bb76c-e16e-4fe8-87f2-bddc7eb59300.jpg" ImageName="Vegas 02"  />
+		<Image ImageID="1000003" StoredFilename="69f99c47-d1b0-4123-b62b-8f18bdc5702f.jpg" ImageName="Vegas 03"  />
+		<Image ImageID="1000004" StoredFilename="626c6a35-4523-46aa-9d0a-c2687b581e27.jpg" ImageName="Vegas 04"  />
+		<Image ImageID="1000010" StoredFilename="1.png" ImageName="1"  />
+		<Image ImageID="1000011" StoredFilename="2.png" ImageName="2"  />
+		<Image ImageID="1000012" StoredFilename="3.png" ImageName="3"  />
+		<Image ImageID="1000013" StoredFilename="4.png" ImageName="4"  />
+		<Image ImageID="1000014" StoredFilename="5.png" ImageName="5"  />
+		<Image ImageID="1000015" StoredFilename="6.png" ImageName="6"  />
+		<Image ImageID="1000016" StoredFilename="7.png" ImageName="7"  />
+		<Image ImageID="1000017" StoredFilename="8.png" ImageName="8"  />
+		<Image ImageID="1000018" StoredFilename="9.png" ImageName="9"  />
+		<Image ImageID="1000019" StoredFilename="10.png" ImageName="10"  />
+		<Image ImageID="1000020" StoredFilename="bi1.gif" ImageName="bi1.gif"  />
+		<Image ImageID="1000021" StoredFilename="bi1.png" ImageName="bi1.png"  />
+		<Image ImageID="1000022" StoredFilename="bi2.gif" ImageName="bi2.gif"  />
+		<Image ImageID="1000023" StoredFilename="bi2.png" ImageName="bi2.png"  />
+		<Image ImageID="1000024" StoredFilename="bi3.gif" ImageName="bi3.gif"  />
+		<Image ImageID="1000025" StoredFilename="bi3.png" ImageName="bi3.png"  />
+		<Image ImageID="1000026" StoredFilename="bi4.gif" ImageName="bi4.gif"  /> 
+	</Images>
+	<PlayLists>
+		<PlayList PlayListID="1000000"  />
+		<PlayList PlayListID="1000001"  />
+	</PlayLists>
+	<PlayListVideoXrefs>
+		<PlayListVideoXref PlayListVideoXrefID="1000000" PlayListID="1000000" VideoID="1000000" PlayOrder="1"  />
+		<PlayListVideoXref PlayListVideoXrefID="1000001" PlayListID="1000001" VideoID="1000001" PlayOrder="1"  /> 
+	</PlayListVideoXrefs>
+	<Videos>
+		<Video VideoID="1000000" StoredFilename="0EBC6160-CA2C-4497-960C-0A2C2DE7B380.mp4" VideoName="Countdown Video"  />
+		<Video VideoID="1000001" StoredFilename="Kurumsal Zeka Tanıtım Videosu.wmv" VideoName="Omer abi video"  />
+	</Videos>
+	<Musics>
+		<Music MusicID="1000000" StoredFilename="1B36982F-4101-4D38-AF20-FAD88A0FA9B5.mp3" MusicName="Music Example 1"  />
+		<Music MusicID="1000001" StoredFilename="ADA2DBFA-D8D9-49A8-8370-8329A830667E.mp3" MusicName="Music Example 2"  />
+		<Music MusicID="1000002" StoredFilename="E4B660F0-ACD3-44F1-92EE-FA23110BE5C6.mp3" MusicName="Music Example 3"  />
+	</Musics>
+	<PlayerSettings>
+		<PlayerSetting PlayerSettingName="ButtonTextBack" PlayerSettingTypeID="1000001" PlayerSettingValue="Back"  />
+		<PlayerSetting PlayerSettingName="ButtonTextClose" PlayerSettingTypeID="1000001" PlayerSettingValue="Close"  />
+		<PlayerSetting PlayerSettingName="ButtonTextNext" PlayerSettingTypeID="1000001" PlayerSettingValue="Next"  />
+		<PlayerSetting PlayerSettingName="ButtonTextOpen" PlayerSettingTypeID="1000001" PlayerSettingValue="Open"  />
+		<PlayerSetting PlayerSettingName="DownloadFolder" PlayerSettingTypeID="1000001" PlayerSettingValue="C:\osVodigi\"  />
+		<PlayerSetting PlayerSettingName="MediaSourceUrl" PlayerSettingTypeID="1000001" PlayerSettingValue="http://localhost:52713/Media/"  />
+		<PlayerSetting PlayerSettingName="ShowCursor" PlayerSettingTypeID="1000003" PlayerSettingValue="True"  />
+	</PlayerSettings>
+</xml>
+
+
+
+
+
