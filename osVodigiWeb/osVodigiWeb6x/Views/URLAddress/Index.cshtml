@@ -71,7 +71,7 @@
     <div class="searchdiv">
         <table class="searchtable">
             <tr>
-                <td class="searchcell"><b>URL Address Name:&nbsp;</b><br />@Html.TextBox("txtURLAddressName", (string)ViewData["UrlAddressName"], new { @style = "width:150px;font-size:10px;" })</td>
+                <td class="searchcell"><b>URL Address Name:&nbsp;</b><br />@Html.TextBox("txtURLAddressName", (string)ViewData["URLAddressName"], new { @style = "width:150px;font-size:10px;" })</td>
                 <td class="searchcell"><b>Tag:</b><br />@Html.TextBox("txtTag", (string)ViewData["Tag"], new { @style = "width:150px;font-size:10px;" })</td>
                 <td class="searchcell"><b>Include Inactive:</b><br />@Html.CheckBox("chkIncludeInactive", (bool)ViewData["IncludeInactive"])</td>
                 <td class="searchcell"><b>Sort By:</b><br />@Html.DropDownList("lstSortBy", (SelectList)ViewData["SortByList"], new { @style = "font-size:10px;" })@Html.DropDownList("lstAscDesc", (SelectList)ViewData["AscDescList"], new { @style = "font-size:10px;" })</td>
@@ -94,18 +94,21 @@
                             <img id="imgsmallpreview" class="gridpreview" alt="url-icon" style="height:40px;" src="~/Images/urls-icon.png"    />
                         </td>
                         <td class="gridcell" style="width:160px;color:#315581;text-align:right;"><b>URL Address Name:</b></td>
-                        <td class="gridcell" style="width:185px;"><b>@Html.DisplayFor(modelItem => item.UrlAddressName)</b></td>
+                        <td class="gridcell" style="width:185px;"><b>@Html.DisplayFor(modelItem => item.URLAddressName)</b></td>
                         <td class="gridcell" style="width:60px;color:#315581;text-align:right;"><b>Active:</b></td>
                         <td class="gridcell" style="width:100px;">@Html.DisplayFor(modelItem => item.IsActive)</td>
-                        <td class="gridcell" rowspan="2" style="width:50px;">
-                            <div class="gridlinkdiv"><span id="gridlink">@Html.ActionLink("Edit", "Edit", new { id = item.UrlAddressID })</span></div>
+                        <td class="gridcell"  style="width:50px;">
+                            <div class="gridlinkdiv"><span id="gridlink">@Html.ActionLink("Edit", "Edit", new { id = item.URLAddressID })</span></div>
                         </td>
                     </tr>
-                    <tr >
+                    <tr>
                         <td class="gridcell" style="width:160px;color:#315581;text-align:right;"><b>URL Address Source:</b></td>
-                        <td class="gridcell" > <a target="_blank" href="@Html.DisplayFor(modelItem => item.UrlAddressSource)" style="display:block;word-wrap:break-word;width:400px;">@Html.DisplayFor(modelItem => item.UrlAddressSource)  </a></td>
+                        <td class="gridcell"> <a target="_blank" href="@Html.DisplayFor(modelItem => item.URLAddressSource)" style="display:inline-block;word-wrap:break-word;width:400px;">@Html.DisplayFor(modelItem => item.URLAddressSource)  </a></td>
                         <td class="gridcell" style="width:60px;color:#315581;text-align:right;"><b>Tags:</b></td>
                         <td class="gridcell" style="width:100px;">@Html.DisplayFor(modelItem => item.Tags)</td>
+                        <td class="gridcell"  style="width:50px;">
+                            <div  class="gridlinkdiv delete" ><span id="gridlink">@Html.ActionLink("Delete", "Delete", new { id = item.URLAddressID } )</span></div>
+                        </td>
                     </tr>
                 </table>
             </div>

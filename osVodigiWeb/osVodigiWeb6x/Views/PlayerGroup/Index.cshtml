@@ -84,7 +84,7 @@
                         <td class="gridcell"style="color:#315581;text-align:right;"><b>Player Group Description:</b></td>
                         <td class="gridcell" colspan="3">@Html.DisplayFor(modelItem => item.PlayerGroupDescription)</td>
                         <td class="gridcell">
-                            <div class="gridlinkdiv"><span id="gridlinkdelete">@Html.ActionLink("Schedule", "Edit", "PlayerGroupSchedule", new { id = item.PlayerGroupID }, "")</span></div>
+                            <div class="gridlinkdiv"><span id="gridlink">@Html.ActionLink("Schedule", "Edit", "PlayerGroupSchedule", new { id = item.PlayerGroupID }, "")</span></div>
                         </td>
                     </tr>
                 </table>

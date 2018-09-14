@@ -444,6 +444,7 @@
     <Content Include="Views\WebShow\Index.cshtml" />
     <Content Include="Views\URLAddress\Index.cshtml" />
     <Content Include="Views\URLAddress\Upload.cshtml" />
+    <Content Include="Views\URLAddress\Edit.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

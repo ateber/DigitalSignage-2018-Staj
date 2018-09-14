@@ -61,7 +61,7 @@ namespace osVodigiWeb6x.Controllers
 
                 // Add the session values to the view data so they can be populated in the form
                 ViewData["AccountID"] = pagestate.AccountID;
-                ViewData["UrlAddressName"] = pagestate.UrlAddressName;
+                ViewData["URLAddressName"] = pagestate.UrlAddressName;
                 ViewData["Tag"] = pagestate.Tag;
                 ViewData["IncludeInactive"] = pagestate.IncludeInactive;
                 ViewData["SortBy"] = pagestate.SortBy;
@@ -99,9 +99,7 @@ namespace osVodigiWeb6x.Controllers
                 ViewData["PageCount"] = Convert.ToString(pagecount);
                 ViewData["RecordCount"] = Convert.ToString(recordcount);
 
-                // Set the Video folder 
-                //ViewData["VideoFolder"] = @"~/Media/" + Convert.ToString(Session["UserAccountID"]) + @"/Videos/";
-
+                 
                 ViewResult result = View(repository.GetURLAddressPage(pagestate.AccountID, pagestate.UrlAddressName, pagestate.Tag, pagestate.IncludeInactive, pagestate.SortBy, isdescending, pagestate.PageNumber, pagecount));
                 result.ViewName = "Index";
                 return result;
@@ -113,85 +111,7 @@ namespace osVodigiWeb6x.Controllers
             }
         }
 
-        private URLAddressPageState GetURLAddressPageState()
-        {
-            try
-            {
-                URLAddressPageState pagestate = new URLAddressPageState();
-
-
-                // Initialize the session values if they don't exist - need to do this the first time controller is hit
-                if (Session["URLAddressPageState"] == null)
-                {
-                    int accountid = 0;
-                    if (Session["UserAccountID"] != null)
-                        accountid = Convert.ToInt32(Session["UserAccountID"]);
-
-                    pagestate.AccountID = accountid;
-                    pagestate.UrlAddressName = String.Empty;
-                    pagestate.Tag = String.Empty;
-                    pagestate.IncludeInactive = false;
-                    pagestate.SortBy = "UrlAddressName";
-                    pagestate.AscDesc = "Ascending";
-                    pagestate.PageNumber = 1;
-                    Session["URLAddressPageState"] = pagestate;
-                }
-                else
-                {
-                    pagestate = (URLAddressPageState)Session["URLAddressPageState"];
-                }
-                return pagestate;
-            }
-            catch { return new URLAddressPageState(); }
-        }
-
-        private void SavePageState(URLAddressPageState pagestate)
-        {
-            Session["URLAddressPageState"] = pagestate;
-        }
-
-        private List<SelectListItem> BuildSortByList()
-        {
-            // Build the sort by list
-            List<SelectListItem> sortitems = new List<SelectListItem>();
-
-            SelectListItem sortitem1 = new SelectListItem();
-            sortitem1.Text = "URL Address Name";
-            sortitem1.Value = "UrlAddressName"; 
-
-            SelectListItem sortitem2 = new SelectListItem();
-            sortitem2.Text = "Tags";
-            sortitem2.Value = "Tags";
-
-            SelectListItem sortitem3 = new SelectListItem();
-            sortitem3.Text = "Is Active";
-            sortitem3.Value = "IsActive";
-
-            sortitems.Add(sortitem1);
-            sortitems.Add(sortitem2);
-            sortitems.Add(sortitem3); 
-
-            return sortitems;
-        }
-
-        private List<SelectListItem> BuildAscDescList()
-        {
-            // Build the asc desc list
-            List<SelectListItem> ascdescitems = new List<SelectListItem>();
-
-            SelectListItem ascdescitem1 = new SelectListItem();
-            ascdescitem1.Text = "Asc";
-            ascdescitem1.Value = "Asc";
-
-            SelectListItem ascdescitem2 = new SelectListItem();
-            ascdescitem2.Text = "Desc";
-            ascdescitem2.Value = "Desc";
-
-            ascdescitems.Add(ascdescitem1);
-            ascdescitems.Add(ascdescitem2);
-
-            return ascdescitems;
-        }
+        
 
         //
         // GET: /URLAddress/Upload
@@ -254,7 +174,7 @@ namespace osVodigiWeb6x.Controllers
                         repository.CreateURLAddress(urlAddress);
 
                         CommonMethods.CreateActivityLog((User)Session["User"], "URLAddress", "Upload",
-                                "Added URLAddress '" + urlAddress.UrlAddressName + "' - ID: " + urlAddress.UrlAddressID.ToString()); 
+                                "Added URLAddress '" + urlAddress.URLAddressName + "' - ID: " + urlAddress.URLAddressID.ToString()); 
                         return RedirectToAction("Index");
                     }
                 }
@@ -267,15 +187,106 @@ namespace osVodigiWeb6x.Controllers
                 return RedirectToAction("Index", "ApplicationError");
             }
         }
+         
+        [HttpGet]
+        public ActionResult Edit(int id)
+        {
+            try
+            {
+                if (Session["UserAccountID"] == null)
+                    return RedirectToAction("Validate", "Login");
+                User user = (User)Session["User"];
+                ViewData["LoginInfo"] = Utility.BuildUserAccountString(user.Username, Convert.ToString(Session["UserAccountName"]));
+                if (user.IsAdmin)
+                    ViewData["txtIsAdmin"] = "true";
+                else
+                    ViewData["txtIsAdmin"] = "false";
+
+                URLAddress urlAdress = repository.GetURLAddress(id); 
+                ViewData["ValidationMessage"] = String.Empty;
+
+                return View(urlAdress);
+            }
+            catch (Exception ex)
+            {
+                Helpers.SetupApplicationError("URL Address", "Edit", ex.Message);
+                return RedirectToAction("Index", "ApplicationError");
+            }
+        }
+
+        [HttpPost]
+        public ActionResult Edit(URLAddress urlAddress)
+        {
+            try
+            {
+                if (Session["UserAccountID"] == null)
+                    return RedirectToAction("Validate", "Login");
+                User user = (User)Session["User"];
+                ViewData["LoginInfo"] = Utility.BuildUserAccountString(user.Username, Convert.ToString(Session["UserAccountName"]));
+                if (user.IsAdmin)
+                    ViewData["txtIsAdmin"] = "true";
+                else
+                    ViewData["txtIsAdmin"] = "false";
+
+                if (ModelState.IsValid)
+                {
+                    // Set NULLs to Empty Strings
+                    urlAddress = FillNulls(urlAddress);
+ 
+                    if(user.AccountID.Equals(urlAddress.AccountID))
+                        repository.UpdateURLAddress(urlAddress);
+
+                    CommonMethods.CreateActivityLog((User)Session["User"], "URLAddress", "Edit",
+                        "Edited URLAddress '" + urlAddress.URLAddressName + "' - ID: " + urlAddress.URLAddressID.ToString()); 
+
+                    return RedirectToAction("Index");
+                }
+
+                return View(urlAddress);
+            }
+            catch (Exception ex)
+            {
+                Helpers.SetupApplicationError("URLAddress", "Edit POST", ex.Message);
+                return RedirectToAction("Index", "ApplicationError");
+            }
+        }
+
+        [HttpGet]
+        public ActionResult Delete(int id)
+        {
+            try
+            {
+                if (Session["UserAccountID"] == null)
+                    return RedirectToAction("Validate", "Login");
+                User user = (User)Session["User"];
+                ViewData["LoginInfo"] = Utility.BuildUserAccountString(user.Username, Convert.ToString(Session["UserAccountName"]));
+                if (user.IsAdmin)
+                    ViewData["txtIsAdmin"] = "true";
+                else
+                    ViewData["txtIsAdmin"] = "false";
+                URLAddress urlAddress = repository.GetURLAddress(id);
+                if(urlAddress.AccountID.Equals(user.AccountID))
+                    repository.DeleteURLAddress(id);
+                return RedirectToAction("Index");
+
+            }
+            catch(Exception ex)
+            {
+                Helpers.SetupApplicationError("URLAddress", "Delete Get", ex.Message);
+                return RedirectToAction("Index", "ApplicationError");
+            }
+           
+        }
 
         private URLAddress CreateNewURLAddress()
         {
-            URLAddress UrlAddress = new URLAddress() {
-                UrlAddressID = 0,
-                AccountID = 0, 
-                UrlAddressName = String.Empty,
+            URLAddress UrlAddress = new URLAddress()
+            {
+                URLAddressID = 0,
+                AccountID = 0,
+                URLAddressName = String.Empty,
                 Tags = String.Empty,
-                UrlAddressSource = String.Empty,
+                URLAddressSource = String.Empty,
                 IsActive = true
             };
             return UrlAddress;
@@ -283,9 +294,88 @@ namespace osVodigiWeb6x.Controllers
 
         private URLAddress FillNulls(URLAddress urlAddress)
         {
-            if (urlAddress.Tags == null) urlAddress.Tags = String.Empty; 
+            if (urlAddress.Tags == null) urlAddress.Tags = String.Empty;
             return urlAddress;
         }
 
+        private URLAddressPageState GetURLAddressPageState()
+        {
+            try
+            {
+                URLAddressPageState pagestate = new URLAddressPageState();
+
+
+                // Initialize the session values if they don't exist - need to do this the first time controller is hit
+                if (Session["URLAddressPageState"] == null)
+                {
+                    int accountid = 0;
+                    if (Session["UserAccountID"] != null)
+                        accountid = Convert.ToInt32(Session["UserAccountID"]);
+
+                    pagestate.AccountID = accountid;
+                    pagestate.UrlAddressName = String.Empty;
+                    pagestate.Tag = String.Empty;
+                    pagestate.IncludeInactive = false;
+                    pagestate.SortBy = "URLAddressName";
+                    pagestate.AscDesc = "Ascending";
+                    pagestate.PageNumber = 1;
+                    Session["URLAddressPageState"] = pagestate;
+                }
+                else
+                {
+                    pagestate = (URLAddressPageState)Session["URLAddressPageState"];
+                }
+                return pagestate;
+            }
+            catch { return new URLAddressPageState(); }
+        }
+
+        private void SavePageState(URLAddressPageState pagestate)
+        {
+            Session["URLAddressPageState"] = pagestate;
+        }
+
+        private List<SelectListItem> BuildSortByList()
+        {
+            // Build the sort by list
+            List<SelectListItem> sortitems = new List<SelectListItem>();
+
+            SelectListItem sortitem1 = new SelectListItem();
+            sortitem1.Text = "URL Address Name";
+            sortitem1.Value = "URLAddressName";
+
+            SelectListItem sortitem2 = new SelectListItem();
+            sortitem2.Text = "Tags";
+            sortitem2.Value = "Tags";
+
+            SelectListItem sortitem3 = new SelectListItem();
+            sortitem3.Text = "Is Active";
+            sortitem3.Value = "IsActive";
+
+            sortitems.Add(sortitem1);
+            sortitems.Add(sortitem2);
+            sortitems.Add(sortitem3);
+
+            return sortitems;
+        }
+
+        private List<SelectListItem> BuildAscDescList()
+        {
+            // Build the asc desc list
+            List<SelectListItem> ascdescitems = new List<SelectListItem>();
+
+            SelectListItem ascdescitem1 = new SelectListItem();
+            ascdescitem1.Text = "Asc";
+            ascdescitem1.Value = "Asc";
+
+            SelectListItem ascdescitem2 = new SelectListItem();
+            ascdescitem2.Text = "Desc";
+            ascdescitem2.Value = "Desc";
+
+            ascdescitems.Add(ascdescitem1);
+            ascdescitems.Add(ascdescitem2);
+
+            return ascdescitems;
+        }
     }
 }

@@ -17,20 +17,35 @@ namespace osVodigiWeb6x.Models
             db.SaveChanges();
         }
 
+        public void DeleteURLAddress(int urlAddressID)
+        {
+            URLAddress customer = new URLAddress() { URLAddressID = urlAddressID };
+            db.URLAddresses.Attach(customer);
+            db.URLAddresses.Remove(customer);
+            db.SaveChanges();
+        }
+
+        public void DeleteURLAddress(URLAddress urladdress)
+        {
+            db.URLAddresses.Remove(urladdress);
+            db.SaveChanges();
+        }
+
         public IEnumerable<URLAddress> GetActiveURLAddresses(int accountid)
         {
-            return db.URLAddresses.Where(url => url.AccountID == accountid).Where(url => url.IsActive==true).OrderBy("UrlAddressName", false).ToList(); ; 
+            return db.URLAddresses.Where(url => url.AccountID == accountid).Where(url => url.IsActive==true).OrderBy("URLAddressName", false).ToList(); ; 
         }
 
         public IEnumerable<URLAddress> GetAllURLAddresses(int accountid)
         {
-            return db.URLAddresses.Where(url => url.AccountID == accountid).OrderBy("UrlAddressName",false).ToList(); ;
+            return db.URLAddresses.Where(url => url.AccountID == accountid).OrderBy("URLAddressName",false).ToList(); ;
         }
 
         public URLAddress GetURLAddress(int urladdressid)
         {
-            return db.URLAddresses.Find(urladdressid);
+            return db.URLAddresses.AsNoTracking().Where(urlADdress => urlADdress.URLAddressID==urladdressid).SingleOrDefault();
         }
+
 
     
         public IEnumerable<URLAddress> GetURLAddressPage(int accountid, string urlname, string tag, bool includeinactive, string sortby, bool isdescending, int pagenumber, int pagecount)
@@ -38,7 +53,7 @@ namespace osVodigiWeb6x.Models
              //Get a single page from the filtered records
             var query = db.URLAddresses.Where(urls => urls.AccountID.Equals(accountid));
             if (!String.IsNullOrEmpty(urlname))
-                query = query.Where(urls => urls.UrlAddressName.StartsWith(urlname));
+                query = query.Where(urls => urls.URLAddressName.StartsWith(urlname));
             if (!String.IsNullOrEmpty(tag))
                 query = query.Where(urls => urls.Tags.Contains(tag));
             if (!includeinactive)
@@ -60,7 +75,7 @@ namespace osVodigiWeb6x.Models
                         select urls;
             query = query.Where(urls => urls.AccountID.Equals(accountid));
             if (!String.IsNullOrEmpty(urlname))
-                query = query.Where(urls => urls.UrlAddressName.StartsWith(urlname));
+                query = query.Where(urls => urls.URLAddressName.StartsWith(urlname));
             if (!String.IsNullOrEmpty(tag))
                 query = query.Where(urls => urls.Tags.Contains(tag));
             if (!includeinactive)
