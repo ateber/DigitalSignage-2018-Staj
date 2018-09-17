@@ -213,6 +213,7 @@
     <Compile Include="Models\Classes\UserView.cs" />
     <Compile Include="Models\Classes\Video.cs" />
     <Compile Include="Models\Classes\WebShow.cs" />
+    <Compile Include="Models\Classes\WebShowURLAddressXRef.cs" />
     <Compile Include="Models\Context\VodigiContext.cs" />
     <Compile Include="Models\Context\VodigiLogsContext.cs" />
     <Compile Include="Models\Interfaces\IAccountRepository.cs" />
@@ -256,6 +257,7 @@
     <Compile Include="Models\Interfaces\IUserRepository.cs" />
     <Compile Include="Models\Interfaces\IVideoRepository.cs" />
     <Compile Include="Models\Interfaces\IWebShowRepository.cs" />
+    <Compile Include="Models\Interfaces\IWebShowURLAddressXRefRepository.cs" />
     <Compile Include="Models\Repositories\EntityAccountRepository.cs" />
     <Compile Include="Models\Repositories\EntityActivityLogRepository.cs" />
     <Compile Include="Models\Repositories\EntityAnsweredSurveyQuestionOptionRepository.cs" />
@@ -295,6 +297,7 @@
     <Compile Include="Models\Repositories\EntityUserRepository.cs" />
     <Compile Include="Models\Repositories\EntityVideoRepository.cs" />
     <Compile Include="Models\Repositories\EntityWebShowRepository.cs" />
+    <Compile Include="Models\Repositories\EntityWebShowURLAddressXRefRepository.cs" />
     <Compile Include="Models\Repositories\IOUploadRepository.cs" />
     <Compile Include="Models\Repositories\EntityPlayerSettingTypeRepository.cs" />
     <Compile Include="osVodigiService.asmx.cs">
@@ -445,6 +448,7 @@
     <Content Include="Views\URLAddress\Index.cshtml" />
     <Content Include="Views\URLAddress\Upload.cshtml" />
     <Content Include="Views\URLAddress\Edit.cshtml" />
+    <Content Include="Views\WebShow\Create.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

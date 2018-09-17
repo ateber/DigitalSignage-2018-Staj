@@ -48,8 +48,7 @@ namespace osVodigiWeb6x.Models
             foreach (PlayListVideoXref plvx in plvxs)
             {
                 db.PlayListVideoXrefs.Remove(plvx);
-            }
-
+            } 
             db.SaveChanges();
         }
 

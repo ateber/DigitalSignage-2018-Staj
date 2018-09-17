@@ -44,9 +44,7 @@ namespace osVodigiWeb6x.Models
         public URLAddress GetURLAddress(int urladdressid)
         {
             return db.URLAddresses.AsNoTracking().Where(urlADdress => urlADdress.URLAddressID==urladdressid).SingleOrDefault();
-        }
-
-
+        } 
     
         public IEnumerable<URLAddress> GetURLAddressPage(int accountid, string urlname, string tag, bool includeinactive, string sortby, bool isdescending, int pagenumber, int pagecount)
         {

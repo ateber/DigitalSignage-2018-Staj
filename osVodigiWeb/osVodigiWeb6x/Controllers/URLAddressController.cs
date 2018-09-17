@@ -9,9 +9,7 @@ namespace osVodigiWeb6x.Controllers
 {
     public class URLAddressController : Controller
     {
-        IURLAddressRepository repository;
-        string firstfile = String.Empty;
-        string selectedfile = String.Empty;
+        IURLAddressRepository repository; 
 
         public URLAddressController()
             : this(new EntityURLAddressRepository())
@@ -274,8 +272,7 @@ namespace osVodigiWeb6x.Controllers
             {
                 Helpers.SetupApplicationError("URLAddress", "Delete Get", ex.Message);
                 return RedirectToAction("Index", "ApplicationError");
-            }
-           
+            } 
         }
 
         private URLAddress CreateNewURLAddress()

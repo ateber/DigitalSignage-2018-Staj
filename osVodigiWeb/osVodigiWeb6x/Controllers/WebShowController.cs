@@ -12,8 +12,8 @@ namespace osVodigiWeb6x.Controllers
 
 
         IWebShowRepository repository;
-        string firstfile = String.Empty;
-        string selectedfile = String.Empty;
+        string firstURLAddress = String.Empty;
+        string selectedURLAddress = String.Empty;
 
         public WebShowController()
             : this(new EntityWebShowRepository())
@@ -114,6 +114,205 @@ namespace osVodigiWeb6x.Controllers
                 return RedirectToAction("Index", "ApplicationError"); 
             }
              
+        }
+
+        public ActionResult Create()
+        {
+            try
+            {
+                if (Session["UserAccountID"] == null)
+                    return RedirectToAction("Validate", "Login");
+                User user = (User)Session["User"];
+                ViewData["LoginInfo"] = Utility.BuildUserAccountString(user.Username, Convert.ToString(Session["UserAccountName"]));
+                if (user.IsAdmin)
+                    ViewData["txtIsAdmin"] = "true";
+                else
+                    ViewData["txtIsAdmin"] = "false";
+
+                ViewData["ValidationMessage"] = String.Empty; 
+                ViewData["URLAddressList"] =  new SelectList(BuildURLAddressList(), "Value", "Text", ""); 
+                ViewData["URLAddress"] = firstURLAddress;
+                ViewData["WebShowURLAddresses"] = String.Empty;                 
+                ViewData["WebShowURLAddressList"] = new SelectList(BuildWebShowURLAddressList(""), "Value", "Text", "");
+
+                // Get the account id
+                int accountid = 0;
+                if (Session["UserAccountID"] != null)
+                    accountid = Convert.ToInt32(Session["UserAccountID"]);
+ 
+                return View(CreateNewWebShow());
+            }
+            catch (Exception ex)
+            {
+                Helpers.SetupApplicationError("PlayList", "Create", ex.Message);
+                return RedirectToAction("Index", "ApplicationError");
+            }
+        }
+
+        [HttpPost]
+        public ActionResult Create(WebShow webshow)
+        {
+            try
+            {
+                if (Session["UserAccountID"] == null)
+                    return RedirectToAction("Validate", "Login");
+                User user = (User)Session["User"];
+                ViewData["LoginInfo"] = Utility.BuildUserAccountString(user.Username, Convert.ToString(Session["UserAccountName"]));
+                if (user.IsAdmin)
+                    ViewData["txtIsAdmin"] = "true";
+                else
+                    ViewData["txtIsAdmin"] = "false";
+
+                if (ModelState.IsValid)
+                {
+                    // Set NULLs to Empty Strings
+                    webshow = FillNulls(webshow);
+                    webshow.AccountID = Convert.ToInt32(Session["UserAccountID"]);
+
+                    string validation = ValidateInput(webshow, Request.Form["txtWebShowURLAddresses"].ToString());
+                    if (!String.IsNullOrEmpty(validation))
+                    {
+                        ViewData["ValidationMessage"] = validation;
+                        ViewData["URLAddressList"] = new SelectList(BuildURLAddressList(), "Value", "Text", "");
+                        ViewData["URLAddress"] = firstURLAddress;
+                        ViewData["WebShowURLAddresses"] = Request.Form["txtWebShowURLAddresses"].ToString();
+                        ViewData["WebShowURLAddressList"] = new SelectList(BuildWebShowURLAddressList(Request.Form["txtWebShowURLAddresses"].ToString()), "Value", "Text", "");
+ 
+                        int accountid = 0;
+                        if (Session["UserAccountID"] != null)
+                            accountid = Convert.ToInt32(Session["UserAccountID"]); 
+                        return View(webshow);
+                    }
+                    else
+                    {
+                        // Create the slideshow
+                         
+                        repository.CreateWebShow(webshow); 
+                        CommonMethods.CreateActivityLog((User)Session["User"], "Web Show", "Add",
+                            "Added web show '" + webshow.WebShowName + "' - ID: " + webshow.WebShowID.ToString());
+
+                        IWebShowURLAddressXRefRepository xrefrep = new EntityWebShowURLAddressXRefRepository(); 
+                        IURLAddressRepository urlrep = new EntityURLAddressRepository();
+                        
+
+                        // Create a xref for each web address in the webshow
+                        string[] ids = Request.Form["txtWebShowURLAddresses"].ToString().Split('|');
+                        int i = 1;
+                        foreach (string id in ids)
+                        {
+                            if (!String.IsNullOrEmpty(id.Trim()))
+                            {
+                                URLAddress urlAddress = urlrep.GetURLAddress(Convert.ToInt32(id));
+                                if (urlAddress != null)
+                                {
+                                    WebShowURLAddressXRef xref = new WebShowURLAddressXRef();
+                                    xref.PlayOrder = i;
+                                    xref.WebShowID = webshow.WebShowID;
+                                    xref.URLAddressID = urlAddress.URLAddressID;
+                                    xrefrep.CreateWebShowURLAddressXRef(xref);
+                                    i += 1;
+                                }
+                            }
+                        }  
+                        return RedirectToAction("Index");
+                    }
+                }
+
+                return View(webshow);
+            }
+            catch (Exception ex)
+            {
+                Helpers.SetupApplicationError("SlideShow", "Create POST", ex.Message);
+                return RedirectToAction("Index", "ApplicationError");
+            }
+        }
+
+
+        private string ValidateInput(WebShow webshow, string urlAddresses)
+        {
+            if (webshow.AccountID == 0)
+                return "Account ID is not valid.";
+
+            if (String.IsNullOrEmpty(webshow.WebShowName))
+                return "Web Show Name is required.";
+
+            if (String.IsNullOrEmpty(urlAddresses.Replace("|", "")))
+                return "You must select at least one url address for this web show.";
+
+            return String.Empty;
+        }
+
+        private WebShow FillNulls(WebShow webshow)
+        {
+            if (webshow.Tags == null) webshow.Tags = String.Empty;
+
+            return webshow;
+        }
+
+        private WebShow CreateNewWebShow()
+        {
+            WebShow webshow = new WebShow();
+            webshow.WebShowID = 0;
+            webshow.AccountID = 0;
+            webshow.WebShowName = String.Empty;
+            webshow.Tags = String.Empty;
+            webshow.IsActive = true;
+            webshow.IntervalInSecs = 10;
+
+            return webshow;
+        }
+
+        private List<SelectListItem> BuildURLAddressList()
+        {
+            // Get the account id
+            int accountid = 0;
+            if (Session["UserAccountID"] != null)
+                accountid = Convert.ToInt32(Session["UserAccountID"]);
+
+            // Get the active URLAddress
+            IURLAddressRepository urlrep = new EntityURLAddressRepository();
+            IEnumerable<URLAddress> urls = urlrep.GetActiveURLAddresses(accountid);
+
+            List<SelectListItem> items = new List<SelectListItem>();
+            bool first = true;
+            foreach (URLAddress url in urls)
+            {
+                SelectListItem item = new SelectListItem();
+                item.Text = url.URLAddressName;
+                item.Value = url.URLAddressID+ "|"+url.URLAddressSource;
+                
+                if (first)
+                {
+                    first = false;
+                    firstURLAddress = url.URLAddressSource; 
+                } 
+
+                items.Add(item);
+            } 
+            return items;
+        }
+
+        private List<SelectListItem> BuildWebShowURLAddressList(string urlids)
+        {
+            IURLAddressRepository urlrep = new EntityURLAddressRepository();
+            List<SelectListItem> items = new List<SelectListItem>();
+
+            string[] ids = urlids.Split('|'); 
+            foreach (string id in ids)
+            {
+                if (!String.IsNullOrEmpty(id.Trim()))
+                {
+                    URLAddress urlAddress = urlrep.GetURLAddress(Convert.ToInt32(id));
+                    if (urlAddress != null)
+                    {
+                        SelectListItem item = new SelectListItem();
+                        item.Text = urlAddress.URLAddressName;
+                        item.Value = urlAddress.URLAddressID + "|" + urlAddress.URLAddressSource; 
+                        items.Add(item);
+                    }
+                }
+            } 
+            return items;
         }
 
         private WebShowPageState GetPageState()

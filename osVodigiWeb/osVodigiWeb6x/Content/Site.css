@@ -1,4 +1,5 @@
 ﻿.button { 
+  padding:4px ;
   text-align: center;
   cursor: pointer;
   outline: none;

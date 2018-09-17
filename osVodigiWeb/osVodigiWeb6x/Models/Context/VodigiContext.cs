@@ -46,6 +46,7 @@ namespace osVodigiWeb6x.Models
         public DbSet<SlideShowMusicXref> SlideShowMusicXrefs { get; set; }
         public DbSet<SlideShow> SlideShows { get; set; }
         public DbSet<WebShow> WebShows { get; set; }                    //added
+        public DbSet<WebShowURLAddressXRef> WebShowURLAddressXRefs { get; set; }                    //added 
         public DbSet<Survey> Surveys { get; set; }
         public DbSet<SurveyQuestion> SurveyQuestions { get; set; }
         public DbSet<SurveyQuestionOption> SurveyQuestionOptions { get; set; }
