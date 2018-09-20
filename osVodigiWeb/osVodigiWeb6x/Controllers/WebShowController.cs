@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Web;
 using System.Web.Mvc;
 
@@ -11,8 +12,7 @@ namespace osVodigiWeb6x.Controllers
     {
 
 
-        IWebShowRepository repository;
-        string firstURLAddress = String.Empty;
+        IWebShowRepository repository;  
         string selectedURLAddress = String.Empty;
 
         public WebShowController()
@@ -130,11 +130,9 @@ namespace osVodigiWeb6x.Controllers
                     ViewData["txtIsAdmin"] = "false";
 
                 ViewData["ValidationMessage"] = String.Empty; 
-                ViewData["URLAddressList"] =  new SelectList(BuildURLAddressList(), "Value", "Text", ""); 
-                ViewData["URLAddress"] = firstURLAddress;
-                ViewData["WebShowURLAddresses"] = String.Empty;                 
-                ViewData["WebShowURLAddressList"] = new SelectList(BuildWebShowURLAddressList(""), "Value", "Text", "");
-
+                ViewData["URLAddressList"] =  new SelectList(BuildURLAddressList(), "Value", "Text", "");  
+                ViewData["WebShowURLAddresses"] = String.Empty; 
+                ViewData["WebShowURLAddressList"] = new SelectList(BuildWebShowURLAddressList(""), "Value", "Text", ""); 
                 // Get the account id
                 int accountid = 0;
                 if (Session["UserAccountID"] != null)
@@ -173,11 +171,11 @@ namespace osVodigiWeb6x.Controllers
                     if (!String.IsNullOrEmpty(validation))
                     {
                         ViewData["ValidationMessage"] = validation;
-                        ViewData["URLAddressList"] = new SelectList(BuildURLAddressList(), "Value", "Text", "");
-                        ViewData["URLAddress"] = firstURLAddress;
+                        ViewData["URLAddressList"] = new SelectList(BuildURLAddressList(), "Value", "Text", ""); 
                         ViewData["WebShowURLAddresses"] = Request.Form["txtWebShowURLAddresses"].ToString();
+                        ViewData["WebShowURLAddressZooms"] = Request.Form["txtWebShowURLAddressZooms"].ToString();
                         ViewData["WebShowURLAddressList"] = new SelectList(BuildWebShowURLAddressList(Request.Form["txtWebShowURLAddresses"].ToString()), "Value", "Text", "");
- 
+                
                         int accountid = 0;
                         if (Session["UserAccountID"] != null)
                             accountid = Convert.ToInt32(Session["UserAccountID"]); 
@@ -185,7 +183,7 @@ namespace osVodigiWeb6x.Controllers
                     }
                     else
                     {
-                        // Create the slideshow
+                        // Create the webshow
                          
                         repository.CreateWebShow(webshow); 
                         CommonMethods.CreateActivityLog((User)Session["User"], "Web Show", "Add",
@@ -193,27 +191,30 @@ namespace osVodigiWeb6x.Controllers
 
                         IWebShowURLAddressXRefRepository xrefrep = new EntityWebShowURLAddressXRefRepository(); 
                         IURLAddressRepository urlrep = new EntityURLAddressRepository();
-                        
 
+                        char[] separator = { '{', '|', '}' };
                         // Create a xref for each web address in the webshow
-                        string[] ids = Request.Form["txtWebShowURLAddresses"].ToString().Split('|');
-                        int i = 1;
-                        foreach (string id in ids)
+                        string[] ids = Request.Form["txtWebShowURLAddresses"].ToString().Split(separator);
+                        string[] zooms = Request.Form["txtWebShowURLAddressZooms"].ToString().Split(separator); 
+                        int playOrderNumber = 1; 
+                        for(int i=0;i< ids.Length; i++)
                         {
-                            if (!String.IsNullOrEmpty(id.Trim()))
+                            if (!String.IsNullOrEmpty(ids[i].Trim()))
                             {
-                                URLAddress urlAddress = urlrep.GetURLAddress(Convert.ToInt32(id));
+                                URLAddress urlAddress = urlrep.GetURLAddress(Convert.ToInt32(ids[i]));
                                 if (urlAddress != null)
                                 {
                                     WebShowURLAddressXRef xref = new WebShowURLAddressXRef();
-                                    xref.PlayOrder = i;
+                                    xref.PlayOrder = playOrderNumber;
                                     xref.WebShowID = webshow.WebShowID;
                                     xref.URLAddressID = urlAddress.URLAddressID;
+                                    xref.Zoom = Convert.ToInt32(zooms[i]);
                                     xrefrep.CreateWebShowURLAddressXRef(xref);
-                                    i += 1;
+                                    playOrderNumber += 1;
                                 }
                             }
-                        }  
+                        }
+                         
                         return RedirectToAction("Index");
                     }
                 }
@@ -274,44 +275,46 @@ namespace osVodigiWeb6x.Controllers
             IEnumerable<URLAddress> urls = urlrep.GetActiveURLAddresses(accountid);
 
             List<SelectListItem> items = new List<SelectListItem>();
-            bool first = true;
+            
+            StringBuilder URLAddressSources=new StringBuilder();
             foreach (URLAddress url in urls)
             {
                 SelectListItem item = new SelectListItem();
                 item.Text = url.URLAddressName;
-                item.Value = url.URLAddressID+ "|"+url.URLAddressSource;
-                
-                if (first)
-                {
-                    first = false;
-                    firstURLAddress = url.URLAddressSource; 
-                } 
-
+                item.Value = ""+url.URLAddressID;
+                URLAddressSources.Append("{|}"+url.URLAddressSource ); 
                 items.Add(item);
-            } 
+            }
+            ViewData["URLAddressSources"]= URLAddressSources.ToString();
+
             return items;
         }
 
-        private List<SelectListItem> BuildWebShowURLAddressList(string urlids)
+        private List<SelectListItem> BuildWebShowURLAddressList(string urlIDs)
         {
             IURLAddressRepository urlrep = new EntityURLAddressRepository();
             List<SelectListItem> items = new List<SelectListItem>();
-
-            string[] ids = urlids.Split('|'); 
-            foreach (string id in ids)
+            char[] separator = {'{','|','}' };
+            string[] parseUrlIDs = urlIDs.Split(separator);
+            StringBuilder URLAddressSources = new StringBuilder();
+            foreach (string parseUrlID in parseUrlIDs)
             {
-                if (!String.IsNullOrEmpty(id.Trim()))
+                
+                if (!String.IsNullOrEmpty(parseUrlID.Trim()))
                 {
-                    URLAddress urlAddress = urlrep.GetURLAddress(Convert.ToInt32(id));
+                    URLAddress urlAddress = urlrep.GetURLAddress(Convert.ToInt32(parseUrlID));
                     if (urlAddress != null)
                     {
                         SelectListItem item = new SelectListItem();
                         item.Text = urlAddress.URLAddressName;
-                        item.Value = urlAddress.URLAddressID + "|" + urlAddress.URLAddressSource; 
-                        items.Add(item);
-                    }
+                        item.Value = ""+ urlAddress.URLAddressID;
+                        URLAddressSources.Append("{|}" + urlAddress.URLAddressSource  );
+                       
+                        items.Add(item); 
+                    } 
                 }
-            } 
+            }
+            ViewData["WebShowURLAddressSources"] = URLAddressSources.ToString();
             return items;
         }
 

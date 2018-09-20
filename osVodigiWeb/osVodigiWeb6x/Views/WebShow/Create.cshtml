@@ -10,76 +10,148 @@
 <script type="text/javascript" lang="javascript">
     $(function () {
         $("input:text:visible:first").focus();
+        BuildLstWebShowURLAddress();
+        BuildLstURLAddress(); 
     });
-    function ShowView() { 
-        var selectedValue = $("#lstURLAddress option:selected").val(); 
-        var urlAddressSource = getURLAddressSource(selectedValue);
+    function BuildLstWebShowURLAddress() {
+        
+        var webShowUrlAddressSources = $("#txtWebShowURLAddressSources").val().split("{|}");
+        var zooms = $("#txtWebShowURLAddressZooms").val().split("{|}"); 
+        if (webShowUrlAddressSources != null) {
+            $('#lstWebShowURLAddress option').each(function (i) { 
+                $(this).attr("source", webShowUrlAddressSources[i+1]);
+            });
+        }
+        if (zooms != null) {
+            $('#lstWebShowURLAddress option').each(function (i) {
+                $(this).attr("zoom", zooms[i+1]);
+            });
+        } 
+        var firstOption = $("#lstWebShowURLAddress option:first");
+        firstOption.prop("selected", true);
+        $("#URLWebShowPreview").attr("href", firstOption.attr("source"));
+        $("#URLWebShowPreview").text(firstOption.attr("source"));
+        $("#webShowURLAddressZoomInput").val(firstOption.attr("zoom"));
+        
+
+    }
+    function BuildLstURLAddress() {
+        var urlAddressSources = $("#txtURLAddressSources").val().split("{|}"); 
+        if (urlAddressSources != null) {
+            $('#lstURLAddress option').each(function (i) { 
+                $(this).attr("source", urlAddressSources[i+1]);
+            });
+        }
+        var firstOption = $("#lstURLAddress option:first");
+        firstOption.prop("selected", true);
+       
+        $("#URLAddressView").attr("href", firstOption.attr("source"));
+        $("#URLAddressView").text(firstOption.attr("source"));
+        
+    }
+    function ShowView() {
+        var urlAddressSource = $("#lstURLAddress option:selected").attr("source"); 
         $("#URLAddressView").attr("href", urlAddressSource);
         $("#URLAddressView").text(urlAddressSource);
     }
     function ShowWebShowView() {
-        $("#URLWebShowPreview").show(); 
-        var selectedValue = $("#lstWebShowURLAddresses option:selected").val();
-        var urlAddressSource = getURLAddressSource(selectedValue);
+        $("#URLWebShowPreview").show();
+        var urlAddressSource = $("#lstWebShowURLAddress option:selected").attr("source"); 
+        var selectedZoom = $("#lstWebShowURLAddress option:selected").attr("zoom");
         $("#URLWebShowPreview").attr("href", urlAddressSource);
         $("#URLWebShowPreview").text(urlAddressSource);
+        $("#webShowURLAddressZoomInput").val(selectedZoom);
+        $("#webShowURLAddressZoomInput").prop("disabled", false);
     }
-    function getURLAddressID(value){
+    function getURLAddressID(value) {
         var index = value.indexOf('|');
         if (index != 0 || index != null)
             return value.substring(0, index);
         return "";
-    } 
-    function getURLAddressSource(value) { 
+    }
+    function getURLAddressSource(value) {
         var index = value.indexOf('|');
         if (index != 0 || index != null)
-            return value.substring(index+1, value.length);
+            return value.substring(index + 1, value.length);
         return "";
-    } 
+    }
     function AddToWebShow() {
         var selectedOptions = $("#lstURLAddress option:selected");
         selectedOptions.each(function (index) {
-            var urlAddressName = $(this).text(); 
-            var urlAddress = $(this).val();
-            if (urlAddressName != "" && urlAddress != "") {
-                var option = new Option(urlAddressName, urlAddress, false, false);
-                $('#lstWebShowURLAddresses').append(option);
+            var urlAddressName = $(this).text();
+            var urlAddressID = $(this).val()
+            if (urlAddressName != "" && urlAddressID != "") {
+                var option = new Option(urlAddressName, urlAddressID, false, false);
+                option.setAttribute("zoom", $("#urlAddressZoomInput").val());
+                option.setAttribute("source", $(this).attr("source"));
+                $('#lstWebShowURLAddress').append(option);
                 PopulateurlAddressesStore();
-            }    
-        }); 
+            }
+        });
     }
     function RemoveFromWebShow() {
-        $("#lstWebShowURLAddresses option:selected").remove();
+        $("#lstWebShowURLAddress option:selected").remove();
         PopulateurlAddressesStore();
     }
     function MoveItemUp() {
-        $('#lstWebShowURLAddresses option:selected').each(function () {
+        $('#lstWebShowURLAddress option:selected').each(function () {
             $(this).insertBefore($(this).prev());
         });
         PopulateurlAddressesStore();
     }
     function MoveItemDown() {
-        $('#lstWebShowURLAddresses option:selected').each(function () {
+        $('#lstWebShowURLAddress option:selected').each(function () {
             $(this).insertAfter($(this).next());
         });
         PopulateurlAddressesStore();
     }
     function PopulateurlAddressesStore() {
-        var urlAddresses = ''; 
-        $('#lstWebShowURLAddresses > option').each(function () { 
-            urlAddressId = getURLAddressID(this.value);
-            urlAddresses += '|' + urlAddressId; 
+        var urlAddresses = '';
+        var zooms = "";
+        var sources = "";
+        $('#lstWebShowURLAddress > option').each(function () {
+            urlAddressId = $(this).val();
+            zoom = $(this).attr("zoom");
+            source = $(this).attr("source");
+            urlAddresses += '{|}' + urlAddressId;
+            zooms += '{|}' + zoom;
+            sources += '{|}' + source;  
         });
-        $('#txtWebShowURLAddresses').attr("value", urlAddresses);
-    } 
-     
+        
+        $('#txtWebShowURLAddresses').attr("value", urlAddresses); 
+        $('#txtWebShowURLAddressZooms').attr("value", zooms);
+        $('#txtWebShowURLAddressSources').attr("value", sources);
+     }
+    function urlAddressZoomControl() {
+        var checked = $("#urlAddressZoomCheck").is(":checked");
+        if (checked) {
+            $("#urlAddressZoomInput").prop('disabled', true); 
+        }
+        else {
+            $("#urlAddressZoomInput").prop('disabled', false); 
+        }
+    }
+    function webShowURLAddressZoomInputChange() {
+        var selectedOptions = $("#lstWebShowURLAddress option:selected"); 
+        var zoom = $("#webShowURLAddressZoomInput").val();
+        zoom = zoom.replace(",", ".");
+
+        if (!Number.isNaN(Number(zoom))) {
+            selectedOptions.attr("zoom", zoom);
+            PopulateurlAddressesStore();
+        }
+        else {
+            selectedOptions.attr("zoom", 1);
+            PopulateurlAddressesStore();
+        }
+    }
 </script>
 
 <br />
 <div class="textblock">
     <table class="instructions">
         <tr>
-            <td style="width:100px;"><img src="~/urlAddresses/webshow-icon.png" alt="" style="border-radius:8px 8px;width:70px;height:70px;" /></td>
+            <td style="width:100px;"><img src="~/Images/webshow-icon.png" alt="" style="border-radius:8px 8px;width:70px;height:70px;" /></td>
             <td>
                 <span class="paragraphheader">Add Web Show</span><br />
                 <span class="paragraphtext">Please enter the appropriate information to add a new web show.</span>
@@ -112,33 +184,45 @@
             <td class="formprimary">
                 @Html.TextBoxFor(model => model.IntervalInSecs, new { @style = "width:300px;", maxlength = 128 })
             </td>
-        </tr> 
+        </tr>
         <tr>
             <td class="formsecondary"><b>Active: </b></td>
             <td class="formsecondary">
                 @Html.EditorFor(model => model.IsActive)
             </td>
-        </tr> 
+        </tr>
         <tr>
             <td class="formprimary" style="vertical-align: top;height:525px;">
-                <b>Available URL Addresses</b><br /><br /> 
-                <div  >
+                <b>Available URL Addresses</b><br /><br />
+                <div>
                     @Html.DropDownList("lstURLAddress", (SelectList)ViewData["URLAddressList"], new { @style = "width:320px", @multiple = "true", onchange = "ShowView();", size = 10 })
                 </div>
-                <button class="button" style="background-color:orangered;" type="button" onclick="AddToWebShow();">Add-></button>
-                <br /><br /> 
-                <a id="URLAddressView" target="_blank" href="#" style="display: inline-block;word-wrap:break-word;width:300px;" href="@(ViewData["URLAddress"])">@(ViewData["URLAddress"])</a>
+                <div>
+                    <div class="button" style="display:inline-block; background-color:dimgrey;  ">
+                        <span>Zoom :</span>
+                        <input id="urlAddressZoomInput" value="1" disabled type="text" style=" height:10px; width:30px;text-align:center" maxlength="5" />
+                        <input id="urlAddressZoomCheck" onchange="urlAddressZoomControl();" style="vertical-align:middle;margin:0px;" type="checkbox" checked />
+                    </div>
+
+                    <button style=" " class="button" type="button" onclick="AddToWebShow();">Add-></button>
+                </div>
+                <br /><br />
+                <a id="URLAddressView" target="_blank" style="display: inline-block;word-wrap:break-word;width:300px;" href="#"> </a>
             </td>
             <td class="formprimary" style="vertical-align: top;height:525px;">
                 <b>Web Show URL Addresses</b><br />  <br />
                 <div>
-                    @Html.DropDownList("lstWebShowURLAddresses", ((SelectList)ViewData["WebShowURLAddressList"]), new { @style = "width:320px;", @multiple = "true", onchange = @"ShowWebShowView();", size = 10 })
+                    @Html.DropDownList("lstWebShowURLAddress", ((SelectList)ViewData["WebShowURLAddressList"]), new { @style = "width:320px;", @multiple = "true", onchange = @"ShowWebShowView();", size = 10 })
                 </div>
                 <button class="button" style="background-color:red;" type="button" onclick="RemoveFromWebShow();">Remove</button>
                 <button class="button" type="button" onclick="MoveItemUp();">Move Up</button>
                 <button class="button" type="button" onclick="MoveItemDown();">Move Down</button>
+                <div class="button" style="display:inline-block; background-color:dimgrey;   ">
+                    <span>Zoom :</span>
+                    <input id="webShowURLAddressZoomInput" onchange="webShowURLAddressZoomInputChange();"   type="text" style=" height:10px; width:30px;text-align:center" maxlength="5" />
+                </div>
                 <br /><br />
-                <a id="URLWebShowPreview" target="_blank" href="#" style="display: inline-block;word-wrap:break-word;width:300px;"></a>
+                <a id="URLWebShowPreview" target="_blank"  style="display: inline-block;word-wrap:break-word;width:300px;" href="#"> </a>
             </td>
         </tr>
         <tr>
@@ -147,9 +231,12 @@
     </table>
     <div class="formfootnote"><span class="required">*</span> indicates a required field.</div>
     <br />
-    <div class="errormessage">@Html.Raw((string)ViewData["ValidationMessage"])</div> 
-    @Html.Hidden("txtWebShowURLAddresses", ViewData["SlideShowurlAddresses"])
-     
+    <div class="errormessage">@Html.Raw((string)ViewData["ValidationMessage"])</div>
+    @Html.Hidden("txtWebShowURLAddresses", ViewData["WebShowURLAddresses"])
+    @Html.Hidden("txtURLAddressSources", ViewData["URLAddressSources"].ToString())
+    @Html.Hidden("txtWebShowURLAddressSources", ViewData["WebShowURLAddressSources"])
+    @Html.Hidden("txtWebShowURLAddressZooms", ViewData["WebShowURLAddressZooms"])
+    
 }
 
 <script type="text/javascript" lang="javascript">

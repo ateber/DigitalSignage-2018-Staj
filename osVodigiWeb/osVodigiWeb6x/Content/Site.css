@@ -1,5 +1,7 @@
 ﻿.button { 
-  padding:4px ;
+    font-weight:bold;
+  margin:0px;
+  padding:5px ;
   text-align: center;
   cursor: pointer;
   outline: none;
@@ -255,10 +257,7 @@ img.imagepopuppreview
     max-width:320px;
     max-height:320px;
     border: 1px #333333 solid;
-    margin-left: auto;
-    margin-right: auto;
-    margin-top: auto;
-    margin-bottom: auto;
+    margin:auto;
 }
 
 video.videopopuppreview
@@ -266,10 +265,7 @@ video.videopopuppreview
     max-width:420px;
     max-height:240px;
     border: 1px #333333 solid;
-    margin-left: auto;
-    margin-right: auto;
-    margin-top: auto;
-    margin-bottom: auto;
+    margin:auto;
 }
 
 input.search
