@@ -238,8 +238,7 @@ namespace osVodigiWeb6x.Controllers
                                     i += 1;
                                 }
                             }
-                        }
-
+                        } 
                         return RedirectToAction("Index");
                     }
                 }

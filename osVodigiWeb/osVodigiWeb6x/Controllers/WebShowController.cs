@@ -175,10 +175,7 @@ namespace osVodigiWeb6x.Controllers
                         ViewData["WebShowURLAddresses"] = Request.Form["txtWebShowURLAddresses"].ToString();
                         ViewData["WebShowURLAddressZooms"] = Request.Form["txtWebShowURLAddressZooms"].ToString();
                         ViewData["WebShowURLAddressList"] = new SelectList(BuildWebShowURLAddressList(Request.Form["txtWebShowURLAddresses"].ToString()), "Value", "Text", "");
-                
-                        int accountid = 0;
-                        if (Session["UserAccountID"] != null)
-                            accountid = Convert.ToInt32(Session["UserAccountID"]); 
+                 
                         return View(webshow);
                     }
                     else
@@ -223,11 +220,157 @@ namespace osVodigiWeb6x.Controllers
             }
             catch (Exception ex)
             {
-                Helpers.SetupApplicationError("SlideShow", "Create POST", ex.Message);
+                Helpers.SetupApplicationError("WebShow", "Create POST", ex.Message);
                 return RedirectToAction("Index", "ApplicationError");
             }
         }
 
+        public ActionResult Edit(int id)
+        {
+            try
+            {
+                if (Session["UserAccountID"] == null)
+                    return RedirectToAction("Validate", "Login");
+                User user = (User)Session["User"];
+                ViewData["LoginInfo"] = Utility.BuildUserAccountString(user.Username, Convert.ToString(Session["UserAccountName"]));
+                if (user.IsAdmin)
+                    ViewData["txtIsAdmin"] = "true";
+                else
+                    ViewData["txtIsAdmin"] = "false";
+                
+                WebShow webShow = repository.GetWebShow(id);
+                ViewData["ValidationMessage"] = String.Empty;
+                ViewData["URLAddressList"] = new SelectList(BuildURLAddressList(), "Value", "Text", "");
+               
+
+                // Get the img ids for the websohw
+                string ids = String.Empty;
+                string zooms = String.Empty;
+                IWebShowURLAddressXRefRepository xrefrep = new EntityWebShowURLAddressXRefRepository(); 
+                IEnumerable<WebShowURLAddressXRef> xrefs = xrefrep.GetWebShowURLAddressXRefs(id);
+                foreach (WebShowURLAddressXRef xref in xrefs)
+                {
+                    ids += "{|}" + xref.URLAddressID;
+                    zooms += "{|}" + xref.Zoom;
+                }
+                ViewData["WebShowURLAddresses"] = ids;
+                ViewData["WebShowURLAddressZooms"] = zooms;
+                ViewData["WebShowURLAddressList"] = new SelectList(BuildWebShowURLAddressList(ids), "Value", "Text", "");
+                 
+                return View(webShow);
+            }
+            catch (Exception ex)
+            {
+                Helpers.SetupApplicationError("WebShow", "Edit", ex.Message);
+                return RedirectToAction("Index", "ApplicationError");
+            }
+        }
+
+        [HttpPost]
+        public ActionResult Edit(WebShow webshow)
+        {
+            try
+            {
+                if (Session["UserAccountID"] == null)
+                    return RedirectToAction("Validate", "Login");
+                User user = (User)Session["User"];
+                ViewData["LoginInfo"] = Utility.BuildUserAccountString(user.Username, Convert.ToString(Session["UserAccountName"]));
+                if (user.IsAdmin)
+                    ViewData["txtIsAdmin"] = "true";
+                else
+                    ViewData["txtIsAdmin"] = "false";
+
+                if (ModelState.IsValid)
+                {
+                    // Set NULLs to Empty Strings
+                    webshow = FillNulls(webshow);
+                    webshow.AccountID = Convert.ToInt32(Session["UserAccountID"]);
+                    string validation = ValidateInput(webshow, Request.Form["txtWebShowURLAddresses"].ToString());
+
+                    if (!String.IsNullOrEmpty(validation))
+                    {
+                        ViewData["ValidationMessage"] = validation;
+                        ViewData["URLAddressList"] = new SelectList(BuildURLAddressList(), "Value", "Text", "");
+                        ViewData["WebShowURLAddresses"] = Request.Form["txtWebShowURLAddresses"].ToString();
+                        ViewData["WebShowURLAddressZooms"] = Request.Form["txtWebShowURLAddressZooms"].ToString();
+                        ViewData["WebShowURLAddressList"] = new SelectList(BuildWebShowURLAddressList(Request.Form["txtWebShowURLAddresses"].ToString()), "Value", "Text", "");
+ 
+                        return View(webshow);
+                    }
+                    else
+                    {
+                        // Create the webshow
+
+                        repository.UpdateWebShow(webshow);
+                        CommonMethods.CreateActivityLog((User)Session["User"], "Web Show", "Edit",
+                            "Edited web show '" + webshow.WebShowName + "' - ID: " + webshow.WebShowID.ToString());
+
+                        IWebShowURLAddressXRefRepository xrefrep = new EntityWebShowURLAddressXRefRepository();
+                        IURLAddressRepository urlrep = new EntityURLAddressRepository();
+
+                        // Delete existing xrefs for the playlist
+                        xrefrep.DeleteWebShowURLAddressXRefs(webshow.WebShowID);
+
+                        char[] separator = { '{', '|', '}' };
+                        // Create a xref for each web address in the webshow
+                        string[] ids = Request.Form["txtWebShowURLAddresses"].ToString().Split(separator);
+                        string[] zooms = Request.Form["txtWebShowURLAddressZooms"].ToString().Split(separator);
+                        int playOrderNumber = 1;
+                        for (int i = 0; i < ids.Length; i++)
+                        {
+                            if (!String.IsNullOrEmpty(ids[i].Trim()))
+                            {
+                                URLAddress urlAddress = urlrep.GetURLAddress(Convert.ToInt32(ids[i]));
+                                if (urlAddress != null)
+                                {
+                                    WebShowURLAddressXRef xref = new WebShowURLAddressXRef();
+                                    xref.PlayOrder = playOrderNumber;
+                                    xref.WebShowID = webshow.WebShowID;
+                                    xref.URLAddressID = urlAddress.URLAddressID;
+                                    xref.Zoom = Convert.ToInt32(zooms[i]);
+                                    xrefrep.CreateWebShowURLAddressXRef(xref);
+                                    playOrderNumber += 1;
+                                }
+                            }
+                        }
+
+                        return RedirectToAction("Index");
+                    }
+                }
+
+                return View(webshow);
+            }
+            catch (Exception ex)
+            {
+                Helpers.SetupApplicationError("WebShow", "Create POST", ex.Message);
+                return RedirectToAction("Index", "ApplicationError");
+            }
+        }
+
+        [HttpGet]
+        public ActionResult Delete(int id)
+        {
+            try
+            {
+                if (Session["UserAccountID"] == null)
+                    return RedirectToAction("Validate", "Login");
+                User user = (User)Session["User"];
+                ViewData["LoginInfo"] = Utility.BuildUserAccountString(user.Username, Convert.ToString(Session["UserAccountName"]));
+                if (user.IsAdmin)
+                    ViewData["txtIsAdmin"] = "true";
+                else
+                    ViewData["txtIsAdmin"] = "false";
+                WebShow webShow = repository.GetWebShow(id);
+                if (webShow.AccountID.Equals(user.AccountID))
+                    repository.DeleteWebShow(id);
+                return RedirectToAction("Index"); 
+            }
+            catch (Exception ex)
+            {
+                Helpers.SetupApplicationError("webShow", "Delete Get", ex.Message);
+                return RedirectToAction("Index", "ApplicationError");
+            }
+        }
 
         private string ValidateInput(WebShow webshow, string urlAddresses)
         {
@@ -237,7 +380,7 @@ namespace osVodigiWeb6x.Controllers
             if (String.IsNullOrEmpty(webshow.WebShowName))
                 return "Web Show Name is required.";
 
-            if (String.IsNullOrEmpty(urlAddresses.Replace("|", "")))
+            if (String.IsNullOrEmpty(urlAddresses.Replace("{|}", "")))
                 return "You must select at least one url address for this web show.";
 
             return String.Empty;

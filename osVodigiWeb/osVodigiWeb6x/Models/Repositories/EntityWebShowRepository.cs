@@ -16,6 +16,20 @@ namespace osVodigiWeb6x.Models
             db.SaveChanges();
         }
 
+        public int DeleteWebShow(WebShow webshow)
+        {
+            db.WebShows.Remove(webshow);
+            return db.SaveChanges();
+        }
+
+        public int DeleteWebShow(int webshowid)
+        {
+            WebShow webShow = new WebShow() { WebShowID = webshowid };
+            db.WebShows.Attach(webShow);
+            db.WebShows.Remove(webShow);
+            return db.SaveChanges();
+        }
+
         public IEnumerable<WebShow> GetActiveWebShows(int accountid)
         {
             var query = from webshow in db.WebShows
@@ -43,7 +57,7 @@ namespace osVodigiWeb6x.Models
 
         public WebShow GetWebShow(int webshowid)
         {
-            WebShow webshow = db.WebShows.Find(webshowid); 
+            WebShow webshow = db.WebShows.AsNoTracking().SingleOrDefault(ws=>ws.WebShowID== webshowid); 
             return webshow;
         }
 

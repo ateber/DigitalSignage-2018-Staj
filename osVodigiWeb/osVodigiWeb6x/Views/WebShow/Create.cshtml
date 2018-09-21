@@ -62,19 +62,7 @@
         $("#URLWebShowPreview").text(urlAddressSource);
         $("#webShowURLAddressZoomInput").val(selectedZoom);
         $("#webShowURLAddressZoomInput").prop("disabled", false);
-    }
-    function getURLAddressID(value) {
-        var index = value.indexOf('|');
-        if (index != 0 || index != null)
-            return value.substring(0, index);
-        return "";
-    }
-    function getURLAddressSource(value) {
-        var index = value.indexOf('|');
-        if (index != 0 || index != null)
-            return value.substring(index + 1, value.length);
-        return "";
-    }
+    } 
     function AddToWebShow() {
         var selectedOptions = $("#lstURLAddress option:selected");
         selectedOptions.each(function (index) {

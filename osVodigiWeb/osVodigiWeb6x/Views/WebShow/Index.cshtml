@@ -74,21 +74,20 @@
                         <td class="gridcell" style="width:210px;"><b>@Html.DisplayFor(modelItem => item.WebShowName)</b></td>
                         <td class="gridcell" style="width:200px;color:#315581;text-align:right;"><b>Active:</b></td>
                         <td class="gridcell" style="width:210px;">@Html.DisplayFor(modelItem => item.IsActive)</td>
-                        <td class="gridcell" style="width:100px;">
+                        <td class="gridcell" style="width:50px;">
                             <div class="gridlinkdiv"><span id="gridlink">@Html.ActionLink("Edit", "Edit", new { id = item.WebShowID })</span></div>
                         </td>
                     </tr>
                     <tr>
-                         
+
                         <td class="gridcell" style="color:#315581;text-align:right;"><b>Interval:</b></td>
                         <td class="gridcell">@Html.DisplayFor(modelItem => item.IntervalInSecs) seconds</td>
-                        <td class="gridcell"></td>
-                    </tr>
-                    <tr>
                         <td class="gridcell" style="color:#315581;text-align:right;"><b>Tags:</b></td>
-                        <td class="gridcell" colspan="3">@Html.DisplayFor(modelItem => item.Tags)</td>
-                        <td class="gridcell"></td>
-                    </tr>
+                        <td class="gridcell" >@Html.DisplayFor(modelItem => item.Tags)</td> 
+                        <td class="gridcell" style="width:50px;">
+                            <div class="gridlinkdiv delete"><span id="gridlink">@Html.ActionLink("Delete", "Delete", new { id = item.WebShowID })</span></div>
+                        </td>
+                    </tr> 
                 </table>
             </div>
             if (colorindex == 0) { colorindex = 1; }

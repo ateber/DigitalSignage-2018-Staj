@@ -8,8 +8,8 @@ namespace osVodigiWeb6x.Models
 {
     public interface IURLAddressRepository
     {
-        void DeleteURLAddress(URLAddress urladdress);
-        void DeleteURLAddress(int URLAddressID);
+        int DeleteURLAddress(URLAddress urladdress);
+        int DeleteURLAddress(int URLAddressID);
         void CreateURLAddress(URLAddress urladdress);
         void UpdateURLAddress(URLAddress urladdress);
         URLAddress GetURLAddress(int urladdressid);  

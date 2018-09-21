@@ -10,6 +10,8 @@ namespace osVodigiWeb6x.Models
     {
         void CreateWebShow(WebShow webshow);
         void UpdateWebShow(WebShow webshow);
+        int DeleteWebShow(WebShow webshow);
+        int DeleteWebShow(int webshowid);
         WebShow GetWebShow(int webshowid);
         IEnumerable<WebShow> GetAllWebShows(int accountid);
         IEnumerable<WebShow> GetActiveWebShows(int accountid);

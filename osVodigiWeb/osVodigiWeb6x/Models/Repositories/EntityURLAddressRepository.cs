@@ -17,18 +17,18 @@ namespace osVodigiWeb6x.Models
             db.SaveChanges();
         }
 
-        public void DeleteURLAddress(int urlAddressID)
+        public int DeleteURLAddress(int urlAddressID)
         {
             URLAddress customer = new URLAddress() { URLAddressID = urlAddressID };
             db.URLAddresses.Attach(customer);
             db.URLAddresses.Remove(customer);
-            db.SaveChanges();
+            return db.SaveChanges();
         }
 
-        public void DeleteURLAddress(URLAddress urladdress)
+        public int  DeleteURLAddress(URLAddress urladdress)
         {
             db.URLAddresses.Remove(urladdress);
-            db.SaveChanges();
+            return db.SaveChanges();
         }
 
         public IEnumerable<URLAddress> GetActiveURLAddresses(int accountid)
