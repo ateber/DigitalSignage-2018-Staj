@@ -1,0 +1,136 @@
+﻿<!DOCTYPE html>
+<html>
+    <head>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <meta name="viewport" content="width=200, initial-scale=1.0"/>
+        <style> 
+            body {
+               
+            } 
+        </style>
+    </head>
+    <body> 
+            <p>
+                Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat.
+                Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat. Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim qui blandit praesent luptatum zzril delenit augue duis dolore te feugait nulla facilisi. Nam liber tempor cum soluta nobis eleifend option congue nihil imperdiet doming id quod mazim placerat facer possim assum.
+                Nam liber tempor cum soluta nobis eleifend option congue nihil imperdiet doming id quod mazim placerat facer possim assum.
+            </p>
+        <div id="multiScreenDiv" style="width:683px;height:384px;background-color:rgba(2, 2, 14, 0.938) ;border:7px solid grey">
+            <svg id="multiScreenSvg" width="683" height="384">  
+            </svg> 
+        </div>  
+        
+        <script>
+            var resizeCursorSensitive=1;
+            var rectCount=0;
+            var clickedRect=-1;
+            var svgMouseDown=false;
+            var rectMouseDown=false;
+            svgNS="http://www.w3.org/2000/svg";
+            $("#rect-1").css("x","100");
+            $("#rect-1").css("y","100");
+            $("#multiScreenSvg").mousedown(function (e){  
+                if(!rectMouseDown){
+                    svgMouseDown=true;  
+                    var $rect = $(document.createElementNS(svgNS, 'rect')) 
+                    .attr({
+                        id:"rect"+rectCount,
+                        x: e.offsetX,
+                        y: e.offsetY,
+                        clickedFirstX: e.offsetX,
+                        clickedFirstY: e.offsetY,
+                        width: 0,
+                        height: 0  
+                    })
+                    .css({
+                        fill:"none",
+                        stroke:"green", 
+                        fill: "#455554" 
+                    });
+                    dragElement($rect); 
+                    resizeElement($rect);
+                    $rect.appendTo("#multiScreenSvg"); 
+                }
+                
+            }); 
+
+            $("#multiScreenSvg").mousemove(function(e){
+                if(svgMouseDown){  
+                    var $clickedFirstX=$("#rect"+(rectCount)).attr("clickedFirstX");
+                    var $clickedFirstY=$("#rect"+(rectCount)).attr("clickedFirstY");
+                    var $x=$("#rect"+(rectCount)).attr("x");
+                    var $y=$("#rect"+(rectCount)).attr("y");
+                    if(e.offsetX<$clickedFirstX){
+                        $("#rect"+(rectCount)).attr("x",e.offsetX);
+                    } 
+                    if(e.offsetY<$clickedFirstY) { 
+                        $("#rect"+(rectCount)).attr("y",e.offsetY);
+                    } 
+                    $("#rect"+(rectCount)).attr("width",Math.abs(e.offsetX-$clickedFirstX));
+                    $("#rect"+(rectCount)).attr("height",Math.abs(e.offsetY-$clickedFirstY));
+                    
+                }
+                else{  
+                    if(rectMouseDown){ 
+                        var $clickedFirstX=clickedRect.attr("clickedFirstX");
+                        var $clickedFirstY=clickedRect.attr("clickedFirstY"); 
+                        x= (e.offsetX - $clickedFirstX);
+                        y=(e.offsetY - $clickedFirstY);
+                        clickedRect.attr("x",x); 
+                        clickedRect.attr("y",y);  
+                    }  
+                }
+            });
+
+            $("#multiScreenSvg").mouseup(function (e){
+                if(svgMouseDown){ 
+                    $("#rect"+(rectCount)).css({ 
+                        "stroke-dasharray" :"1 1" 
+                    });
+                    rectCount++;
+                    svgMouseDown=false;
+                } 
+                clickedRect=null; 
+                rectMouseDown=false; 
+            });
+
+            function dragElement($elmnt){  
+                $elmnt.mousedown(function(e){
+                    if(!rectMouseDown){
+                        currentX=e.offsetX; 
+                        currentY=e.offsetY; 
+                        rectMouseDown=true; 
+                        clickedRect=$(this);
+                        var x=$elmnt.attr("x");
+                        var y=$elmnt.attr("y");
+                        $(this).appendTo("#multiScreenSvg");
+                        $elmnt.attr("clickedFirstX",(currentX-x));
+                        $elmnt.attr("clickedFirstY",(currentY-y));
+                    } 
+                }); 
+            } 
+
+            function resizeElement($elmnt){  
+                $elmnt.mousemove(function(e){
+                    var $currentX=Number(e.offsetX); 
+                    var $currentY=Number(e.offsetY);
+                    var $x=Number( $elmnt.attr("x"));
+                    var $y=Number($elmnt.attr("y"));
+                    var $width=Number($elmnt.attr("width"));
+                    var $height=Number($elmnt.attr("height")); 
+                    
+                    if( $currentY <=$y+resizeCursorSensitive   || ( $currentY >= ($y+$height)-resizeCursorSensitive )   ){
+                        $elmnt.css("cursor","s-resize");        
+                    }
+                    else if( $currentX <= $x+resizeCursorSensitive || ( $currentX >= ($x+$width)-resizeCursorSensitive ) ){
+                        $elmnt.css("cursor","e-resize");        
+                    } 
+                    else
+                        $elmnt.css("cursor","pointer");   
+                }); 
+                 
+            }  
+        </script>
+    </body>
+</html>
+ 
