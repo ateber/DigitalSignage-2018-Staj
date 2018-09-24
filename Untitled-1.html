@@ -21,7 +21,9 @@
         </div>  
         
         <script>
-            var resizeCursorSensitive=1;
+            var resizable=false;
+            var resizeCursor=0;
+            var resizeCursorSensitive=3;
             var rectCount=0;
             var clickedRect=-1;
             var svgMouseDown=false;
@@ -42,8 +44,8 @@
                         width: 0,
                         height: 0  
                     })
-                    .css({
-                        fill:"none",
+                    .css({ 
+                         
                         stroke:"green", 
                         fill: "#455554" 
                     });
@@ -70,8 +72,12 @@
                     $("#rect"+(rectCount)).attr("height",Math.abs(e.offsetY-$clickedFirstY));
                     
                 }
-                else{  
-                    if(rectMouseDown){ 
+                else{
+                    if(resizable){
+
+                        console.log(resizeCursor);
+                    }  
+                    else if(rectMouseDown){ 
                         var $clickedFirstX=clickedRect.attr("clickedFirstX");
                         var $clickedFirstY=clickedRect.attr("clickedFirstY"); 
                         x= (e.offsetX - $clickedFirstX);
@@ -85,18 +91,23 @@
             $("#multiScreenSvg").mouseup(function (e){
                 if(svgMouseDown){ 
                     $("#rect"+(rectCount)).css({ 
-                        "stroke-dasharray" :"1 1" 
+                        "stroke-dasharray" :"2 2" 
                     });
                     rectCount++;
                     svgMouseDown=false;
                 } 
                 clickedRect=null; 
-                rectMouseDown=false; 
+                rectMouseDown=false;
+                resizable=false; 
             });
 
             function dragElement($elmnt){  
                 $elmnt.mousedown(function(e){
                     if(!rectMouseDown){
+                        if(resizeCursor==0) 
+                            resizable=false; 
+                        else
+                            resizable=true; 
                         currentX=e.offsetX; 
                         currentY=e.offsetY; 
                         rectMouseDown=true; 
@@ -107,7 +118,7 @@
                         $elmnt.attr("clickedFirstX",(currentX-x));
                         $elmnt.attr("clickedFirstY",(currentY-y));
                     } 
-                }); 
+                });  
             } 
 
             function resizeElement($elmnt){  
@@ -119,16 +130,55 @@
                     var $width=Number($elmnt.attr("width"));
                     var $height=Number($elmnt.attr("height")); 
                     
-                    if( $currentY <=$y+resizeCursorSensitive   || ( $currentY >= ($y+$height)-resizeCursorSensitive )   ){
-                        $elmnt.css("cursor","s-resize");        
-                    }
-                    else if( $currentX <= $x+resizeCursorSensitive || ( $currentX >= ($x+$width)-resizeCursorSensitive ) ){
-                        $elmnt.css("cursor","e-resize");        
-                    } 
-                    else
-                        $elmnt.css("cursor","pointer");   
+                    $leftLine= $currentY <=$y+resizeCursorSensitive ;
+                    $rightLine=  $currentY >= ($y+$height)-resizeCursorSensitive ;
+                    $topLine=$currentX <= $x+resizeCursorSensitive;
+                    $bottomLine= $currentX >= ($x+$width)-resizeCursorSensitive ;
+
+                    $heightLength= $currentY > ($y+5) && $currentY<($y+$height-5) ;
+                    $widthLength= $currentX > ($x+5) && $currentX<($x+$width-5) ;
+                    
+                    if(!rectMouseDown){
+                        if( $leftLine && $topLine ){
+                            $elmnt.css("cursor","se-resize"); 
+                            resizeCursor=7;       
+                        }
+                        else if( $rightLine && $bottomLine ){
+                            $elmnt.css("cursor","se-resize");
+                            resizeCursor=3;        
+                        }
+                        else if( $leftLine && $bottomLine){
+                            $elmnt.css("cursor","sw-resize");  
+                            resizeCursor=1;      
+                        } 
+                        else if( $rightLine && $topLine){
+                            $elmnt.css("cursor","sw-resize");  
+                            resizeCursor=9;      
+                        }     
+                        else if(  $rightLine  && $widthLength ){
+                            $elmnt.css("cursor","s-resize");        
+                            resizeCursor=6;
+                        }
+                        else if(  $bottomLine   && $heightLength ){
+                            $elmnt.css("cursor","e-resize");        
+                            resizeCursor=2;
+                        } 
+                        else if(  $leftLine  && $widthLength ){
+                            $elmnt.css("cursor","s-resize");        
+                            resizeCursor=4;
+                        }
+                        else if(  $topLine  && $heightLength ){
+                            $elmnt.css("cursor","e-resize");        
+                            resizeCursor=8;
+                        } 
+                        else {
+                            $elmnt.css("cursor","pointer");  
+                            resizeCursor=0; 
+                        } 
+                    }     
                 }); 
                  
+                
             }  
         </script>
     </body>
