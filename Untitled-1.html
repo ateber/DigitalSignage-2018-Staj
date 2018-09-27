@@ -48,9 +48,11 @@
                         height: 0  
                     })
                     .css({  
-                        stroke:"blue", 
-                        fill: "#000000",
-                        "stroke-width":"1" 
+                        fill: "green", 
+                        "outline-style": "solid ",
+                        "outline-color":"blue ",  
+                        "outline-width": "thin", 
+                        "outline-offset": "-1px",  
                     });
                     dragElement($rect); 
                     resizeElement($rect);
@@ -58,25 +60,27 @@
                         BlueStrokeStyle(clickedRect);
                         StrokeDasharrayStyle(clickedRect,2,2);
                     }
-                        
-                    clickedRect=$rect;
+                    clickedRect=$rect;    
+                    
                     $rect.appendTo("#multiScreenSvg"); 
                 } 
             }); 
             
             $("#multiScreenSvg").mousemove(function(e){ 
                 
-                    if(resizable){  
+                    if(resizable ){  
                         var $posX=e.offsetX;
                         var $posY=e.offsetY;
                         var $width=Number(clickedRect.attr("width"));    
                         var $height=Number(clickedRect.attr("height"));    
                         var $lenthDiffX=Math.abs($posX-clicked.posX);
                         var $lenthDiffY=Math.abs($posY-clicked.posY);
-                        
+                        var x=Number(clickedRect.attr("x"));
+                        var y=Number(clickedRect.attr("y")); 
+                         
                         if(resizeCursor==7){
-                            clickedRect.attr("x",$posX) ;
-                            clickedRect.attr("y",$posY) ;
+                            clickedRect.attr("x",x+($posX-clicked.posX));
+                            clickedRect.attr("y",y+($posY-clicked.posY));
                             if($posX>clicked.posX)
                                 $width=$width-$lenthDiffX;
                             else
@@ -86,8 +90,8 @@
                             else
                                 $height=$height+$lenthDiffY;  
                         }
-                        if(resizeCursor==9){
-                            clickedRect.attr("y",$posY);
+                        if(resizeCursor==9){ 
+                            clickedRect.attr("y",y+($posY-clicked.posY));
                             if($posX>clicked.posX)
                                 $width=$width+$lenthDiffX;
                             else
@@ -99,7 +103,8 @@
                         }
 
                         if(resizeCursor==1){
-                            clickedRect.attr("x",$posX);
+                            clickedRect.attr("x",x+($posX-clicked.posX));
+                             
                             if ($posX>clicked.posX)
                                 $width=$width-$lenthDiffX;
                             else
@@ -121,13 +126,16 @@
                                 $height=$height-$lenthDiffY;
                         } 
 
-                        if(resizeCursor==8){ 
-                            clickedRect.attr("y",$posY);
-                             
-                            if ($posY>clicked.posY)
-                                $height=$height-$lenthDiffY; 
-                            else
-                                $height=$height+$lenthDiffY; 
+                        if(resizeCursor==8){  
+                            clickedRect.attr("y",y+($posY-clicked.posY));
+                            
+                            if ($posY>clicked.posY){ 
+                                $height=$height-$lenthDiffY;  
+                            }  
+                            else{ 
+                                $height=$height+$lenthDiffY;  
+                            }
+                                
                         }   
 
                         if(resizeCursor==2){  
@@ -138,7 +146,8 @@
                         } 
 
                         if(resizeCursor==4){
-                            clickedRect.attr("x",$posX);
+                            clickedRect.attr("x",x+($posX-clicked.posX));
+                            
                             if ($posX>clicked.posX)
                                 $width=$width-$lenthDiffX;
                             else
@@ -159,7 +168,7 @@
                         
                     }  
                     else if(rectMouseDown){ 
-                        
+                         
                         var $x= Number(clickedRect.attr("x"));
                         var $y= Number(clickedRect.attr("y"));
                         var $lenthDiffX=e.offsetX - clicked.posX;
@@ -172,6 +181,7 @@
                         clicked.posY=(e.offsetY); 
                     }
                     else if(svgMouseDown ){  
+                       
                     clickedRect.attr("x",clicked.posX);
                     clickedRect.attr("y",clicked.posY);
                     var $posX=e.offsetX;
@@ -194,28 +204,40 @@
                 if(svgMouseDown){   
                     rectCount++;
                     svgMouseDown=false;
+                    if(clickedRect.attr("width")<30||clickedRect.attr("height")<30)
+                        clickedRect.remove(); 
                 } 
+                if(clickedRect.attr("x")<1){
+                  
+                   
+                }   
+                    
+                if(clickedRect.attr("y")<1)   
+                     
                 RedStrokeStyle(clickedRect);
                 StrokeDasharrayStyle(clickedRect,2,2); 
                 rectMouseDown=false;
                 resizable=false;
+                 
             });  
 
             function RedStrokeStyle($elmnt){
                 $elmnt.css({
-                    "stroke":"red", 
+                    "outline-color":"red "
                 }); 
             }
             function BlueStrokeStyle($elmnt){
                 $elmnt.css({
-                    "stroke":"blue", 
+                    "outline-color":"blue "
                 }); 
             } 
             function StrokeDasharrayStyle($elmnt,part1,part2){
                 $elmnt.css({
-                    "stroke-dasharray" :part1+" "+ part2 
+                   // "outline-style": "dashed "
                 }); 
             }
+
+             
 
             function dragElement($elmnt){  
                 $elmnt.mousedown(function(e){
@@ -225,18 +247,20 @@
                         if(clickedRect!=null){
                             BlueStrokeStyle(clickedRect);
                             StrokeDasharrayStyle(clickedRect,2,2); 
-                        } 
-  
-                        clicked.posX=e.offsetX;
-                        clicked.posY=e.offsetY;
-                         
+                        }  
+
                         clickedRect=$(this);
                         RedStrokeStyle(clickedRect);
                         StrokeDasharrayStyle(clickedRect,0,0); 
                         clickedRect.appendTo("#multiScreenSvg");
+                        
+                        clicked.posX=e.offsetX;
+                        clicked.posY=e.offsetY;
 
-                        if(resizeCursor==0) 
+                        if(resizeCursor==0){
                             resizable=false; 
+                            
+                        }  
                         else
                             resizable=true;  
                     } 
@@ -254,51 +278,53 @@
                         var $width=Number($elmnt.attr("width"));
                         var $height=Number($elmnt.attr("height")); 
                         
-                        $leftLine= $currentY <=$y+resizeCursorSensitive ;
-                        $rightLine=  $currentY >= ($y+$height)-resizeCursorSensitive ;
-                        $topLine=$currentX <= $x+resizeCursorSensitive;
-                        $bottomLine= $currentX >= ($x+$width)-resizeCursorSensitive ;
+                        $topLine= $currentY <=$y+resizeCursorSensitive ;
+                        $bottomLine=  $currentY >= ($y+$height)-resizeCursorSensitive ;
+                        $leftLine=$currentX <= $x+resizeCursorSensitive;
+                        $rightLine= $currentX >= ($x+$width)-resizeCursorSensitive ;
 
                         $heightLength= $currentY > ($y+10) && $currentY<($y+$height-10) ;
                         $widthLength= $currentX > ($x+10) && $currentX<($x+$width-10) ;
                         
-                        if(!rectMouseDown){
+                        if(!rectMouseDown){  
                             if( $leftLine && $topLine ){
                                 $elmnt.css("cursor","se-resize"); 
-                                resizeCursor=7;       
+                                resizeCursor=7;  
                             }
                             else if( $rightLine && $bottomLine ){
                                 $elmnt.css("cursor","se-resize");
-                                resizeCursor=3;        
+                                resizeCursor=3; 
                             }
-                            else if( $leftLine && $bottomLine){
+                            else if(  $rightLine && $topLine){
                                 $elmnt.css("cursor","sw-resize");  
-                                resizeCursor=9;      
+                                resizeCursor=9; 
+
                             } 
-                            else if( $rightLine && $topLine){
+                            else if( $leftLine &&  $bottomLine){
                                 $elmnt.css("cursor","sw-resize");  
                                 resizeCursor=1;      
                             }     
-                            else if(  $rightLine  && $widthLength ){
+                            else if(  $bottomLine  && $widthLength ){
                                 $elmnt.css("cursor","s-resize");        
                                 resizeCursor=2;
                             }
-                            else if(  $bottomLine   && $heightLength ){
+                            else if( $rightLine  && $heightLength ){
                                 $elmnt.css("cursor","e-resize");        
                                 resizeCursor=6;
                             } 
-                            else if(  $leftLine  && $widthLength ){
+                            else if(  $topLine  && $widthLength ){
                                 $elmnt.css("cursor","s-resize");        
                                 resizeCursor=8;
                             }
-                            else if(  $topLine  && $heightLength ){
+                            else if(  $leftLine  && $heightLength ){
                                 $elmnt.css("cursor","e-resize");        
                                 resizeCursor=4;
                             } 
                             else {
                                 $elmnt.css("cursor","pointer");  
                                 resizeCursor=0; 
-                            } 
+                            }
+                            
                         }     
                     }
                     else{
