@@ -12,11 +12,11 @@
                 Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat. Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim qui blandit praesent luptatum zzril delenit augue duis dolore te feugait nulla facilisi. Nam liber tempor cum soluta nobis eleifend option congue nihil imperdiet doming id quod mazim placerat facer possim assum.
                 Nam liber tempor cum soluta nobis eleifend option congue nihil imperdiet doming id quod mazim placerat facer possim assum.
             </p>
-        <div id="multiScreenDiv"  style=" width:683px;height:384px;background-color:rgba(2, 2, 14, 0.938) ;border:7px solid grey">
-            <svg id="multiScreenSvg" width="683" height="384">  
+            <div  >
+            <svg id="multiScreenSvg"  width="683" height="384" style=" width:683px;height:384px;background-color:rgba(2, 2, 14, 0.938) ;border:50px solid grey">  
                 <!-- <rect x="50" y="50" width="50" height="50" style=" fill: aqua;"></rect> -->
             </svg> 
-        </div>  
+            </div>
         
         <script>
             var clicked={
@@ -26,7 +26,7 @@
             var svgMouseEnter=false;
             var resizable=false;
             var resizeCursor=0;
-            var resizeCursorSensitive=5;
+            var resizeCursorSensitive=8;
             var rectCount=0;
             var clickedRect=null;
             var svgMouseDown=false;
@@ -34,41 +34,147 @@
             svgNS="http://www.w3.org/2000/svg";
             $("#rect-1").css("x","100");
             $("#rect-1").css("y","100");
-            $("#multiScreenSvg").mousedown(function (e){  
-                if(!rectMouseDown){
-                    svgMouseDown=true;  
+            $("#multiScreenSvg").mousedown(function (e){ 
+                if(!resizable){
                     clicked.posX=e.offsetX;
                     clicked.posY=e.offsetY;
-                    var $rect = $(document.createElementNS(svgNS, 'rect')) 
-                    .attr({
-                        id:"rect"+rectCount,
-                        x: e.offsetX,
-                        y: e.offsetY, 
-                        width: 0,
-                        height: 0  
-                    })
-                    .css({  
-                        fill: "green", 
-                        "outline-style": "solid ",
-                        "outline-color":"blue ",  
-                        "outline-width": "thin", 
-                        "outline-offset": "-1px",  
-                    });
-                    dragElement($rect); 
-                    resizeElement($rect);
-                    if(clickedRect!=null){
-                        BlueStrokeStyle(clickedRect);
-                        StrokeDasharrayStyle(clickedRect,2,2);
+                }
+               
+
+                if(resizeCursor==0){
+                    resizable=false;  
+                }  
+                else{
+                    resizable=true;
+                } 
+                
+                if(clickedRect!=null&&!rectMouseDown&&!resizable){
+                    BlueStrokeStyle(clickedRect);
+                    clickedRect=null;
+                }  
+
+                if(!rectMouseDown){
+                    svgMouseDown=true; 
+                    if(!resizable){
+                        clicked.posX=e.offsetX;
+                        clicked.posY=e.offsetY;
+                        var $rect = $(document.createElementNS(svgNS, 'rect')) 
+                        .attr({
+                            id:"rect"+rectCount,
+                            x: e.offsetX,
+                            y: e.offsetY, 
+                            width: 0,
+                            height: 0  
+                        })
+                        .css({  
+                            fill: "green", 
+                            "outline-style": "solid ",
+                            "outline-color":"red ",  
+                            "outline-width": "thin", 
+                            "outline-offset": "0px",   
+                        });
+                        dragElement($rect);  
+                        if(clickedRect!=null){
+                            BlueStrokeStyle(clickedRect);
+                            StrokeDasharrayStyle(clickedRect,2,2);
+                        }
+                        clickedRect=$rect;    
+                        
+                        $rect.appendTo("#multiScreenSvg"); 
                     }
-                    clickedRect=$rect;    
                     
-                    $rect.appendTo("#multiScreenSvg"); 
                 } 
             }); 
+
+            $(window).on("mousemove",function(e){
+                 
+            });
+
+            $("#multiScreenSvg").mouseleave(function(e){
+              /*  
+                console.log("aloo : "+e.offsetX + " " + e.offsetY);
+                console.log(e.offsetX+ " " +e.offsetY); 
+                if(resizable){ 
+                    var $x=clickedRect.attr("x");
+                    var $y=clickedRect.attr("y");
+                    var $width=Number(clickedRect.attr("width"));
+                    var $height=Number(clickedRect.attr("height"));
+                    if(e.offsetX<0){ 
+                        clickedRect.attr("x",1);
+                        clickedRect.attr("width",(($x-1)+$width)) ;
+                    } 
+                    if(e.offsetY<0){
+                        clickedRect.attr("y",1);
+                        clickedRect.attr("height",(($y-1)+$height )) ;
+                    } 
+                } */
+                if(!resizable)
+                    document.body.style.cursor="default"; 
+            });
+            
             
             $("#multiScreenSvg").mousemove(function(e){ 
-                
-                    if(resizable ){  
+                //console.log(e.offsetX+ " " +e.offsetY); 
+                 
+
+                if(clickedRect!=null&&!svgMouseDown     ){ 
+                        var $currentX=Number(e.offsetX); 
+                        var $currentY=Number(e.offsetY);
+                        var $x=Number( clickedRect.attr("x"));
+                        var $y=Number(clickedRect.attr("y"));
+                        var $width=Number(clickedRect.attr("width"));
+                        var $height=Number(clickedRect.attr("height")); 
+                        
+                        $topLine= $currentY <= $y+resizeCursorSensitive &&  $currentY+resizeCursorSensitive  >= $y ;
+                        $bottomLine=  $currentY >= ($y+$height)-resizeCursorSensitive &&  $currentY-resizeCursorSensitive <= ($y+$height);
+                        $leftLine=$currentX <= $x+resizeCursorSensitive &&  $currentX+resizeCursorSensitive  >= $x;
+                        $rightLine= $currentX >= ($x+$width)-resizeCursorSensitive && $currentX-resizeCursorSensitive <= ($x+$width) ;
+
+                        $heightLength= $currentY > ($y+10) && $currentY<($y+$height-10) ;
+                        $widthLength= $currentX > ($x+10) && $currentX<($x+$width-10) ;
+                        
+                        if(!rectMouseDown){  
+                            if( $leftLine && $topLine ){
+                                document.body.style.cursor="se-resize"; 
+                                resizeCursor=7;  
+                            }
+                            else if( $rightLine && $bottomLine ){
+                                document.body.style.cursor="se-resize";
+                                resizeCursor=3; 
+                            }
+                            else if(  $rightLine && $topLine){ 
+                                document.body.style.cursor="sw-resize";  
+                                resizeCursor=9; 
+
+                            } 
+                            else if( $leftLine &&  $bottomLine){
+                                document.body.style.cursor="sw-resize";  
+                                resizeCursor=1;      
+                            }     
+                            else if(  $bottomLine  && $widthLength ){
+                                document.body.style.cursor="s-resize";        
+                                resizeCursor=2;
+                            }
+                            else if( $rightLine  && $heightLength ){
+                                document.body.style.cursor="e-resize";        
+                                resizeCursor=6;
+                            } 
+                            else if(  $topLine  && $widthLength ){
+                                document.body.style.cursor="s-resize";        
+                                resizeCursor=8;
+                            }
+                            else if(  $leftLine  && $heightLength ){
+                                document.body.style.cursor="e-resize";        
+                                resizeCursor=4;
+                            } 
+                            else {
+                                document.body.style.cursor="default";  
+                                resizeCursor=0; 
+                            } 
+                        }     
+                    }
+
+                    if(resizable){  
                         var $posX=e.offsetX;
                         var $posY=e.offsetY;
                         var $width=Number(clickedRect.attr("width"));    
@@ -77,7 +183,7 @@
                         var $lenthDiffY=Math.abs($posY-clicked.posY);
                         var x=Number(clickedRect.attr("x"));
                         var y=Number(clickedRect.attr("y")); 
-                         
+
                         if(resizeCursor==7){
                             clickedRect.attr("x",x+($posX-clicked.posX));
                             clickedRect.attr("y",y+($posY-clicked.posY));
@@ -88,8 +194,9 @@
                             if($posY>clicked.posY)
                                 $height=$height-$lenthDiffY; 
                             else
-                                $height=$height+$lenthDiffY;  
+                                $height=$height+$lenthDiffY;   
                         }
+
                         if(resizeCursor==9){ 
                             clickedRect.attr("y",y+($posY-clicked.posY));
                             if($posX>clicked.posX)
@@ -167,6 +274,7 @@
                         clicked.posY=$posY; 
                         
                     }  
+
                     else if(rectMouseDown){ 
                          
                         var $x= Number(clickedRect.attr("x"));
@@ -180,6 +288,7 @@
                         clicked.posX=(e.offsetX) ;
                         clicked.posY=(e.offsetY); 
                     }
+
                     else if(svgMouseDown ){  
                        
                     clickedRect.attr("x",clicked.posX);
@@ -201,25 +310,64 @@
  
             
             $(window).on("mouseup",function(){
+                
+                
+                var $width=Number(clickedRect.attr("width"));
+                var $height=Number(clickedRect.attr("height"));
+                var $x=Number(clickedRect.attr("x"));
+                var $y=Number(clickedRect.attr("y"));
+
+                if(resizable ||svgMouseDown){
+                    if($x<1){
+                        clickedRect.attr("x",1);
+                        clickedRect.attr("width",(($x-1)+$width)) ;
+                    }
+                    else if(($x+$width)>682){ 
+                         
+                        clickedRect.attr("width",682-$x) ;
+                    }    
+                    if($y<1){
+                        clickedRect.attr("y",1);
+                        clickedRect.attr("height",(($y-1)+$height )) ; 
+                    }
+                    if(($y+$height)>383){ 
+                        clickedRect.attr("height",383-$y) ;
+                    }
+                }
+
                 if(svgMouseDown){   
                     rectCount++;
                     svgMouseDown=false;
-                    if(clickedRect.attr("width")<30||clickedRect.attr("height")<30)
-                        clickedRect.remove(); 
-                } 
-                if(clickedRect.attr("x")<1){
-                  
-                   
-                }   
+                    if(clickedRect.attr("width")<30||clickedRect.attr("height")<30){
+                        clickedRect.remove();
+                        clickedRect=null;
+                    } 
+                }  
+
+                if(rectMouseDown){
+                    if($x<1){
+                        clickedRect.attr("x",1); 
+                    }
+                    else if(($x+$width)>682){  
+                        clickedRect.attr("x",682-$width) ;
+                    }    
+                    if($y<1){
+                        clickedRect.attr("y",1); 
+                    }
+                    if(($y+$height)>383){ 
+                        clickedRect.attr("y",383-$height) ;
+                    }
+                }
                     
-                if(clickedRect.attr("y")<1)   
-                     
+
                 RedStrokeStyle(clickedRect);
                 StrokeDasharrayStyle(clickedRect,2,2); 
-                rectMouseDown=false;
-                resizable=false;
+                rectMouseDown=false; 
                  
-            });  
+                document.body.style.cursor="default"; 
+                resizable=false;  
+            }); 
+              
 
             function RedStrokeStyle($elmnt){
                 $elmnt.css({
@@ -241,103 +389,30 @@
 
             function dragElement($elmnt){  
                 $elmnt.mousedown(function(e){
-                    if(!rectMouseDown){ 
+                    if(resizeCursor==0){
+                        resizable=false;  
+                    }  
+                    else{
+                        resizable=true;
+                    } 
+                    if(!rectMouseDown&&!resizable){ 
+                        //console.log("rectMouseDown");
                         rectMouseDown=true; 
-
                         if(clickedRect!=null){
                             BlueStrokeStyle(clickedRect);
                             StrokeDasharrayStyle(clickedRect,2,2); 
-                        }  
-
+                        }   
                         clickedRect=$(this);
                         RedStrokeStyle(clickedRect);
                         StrokeDasharrayStyle(clickedRect,0,0); 
                         clickedRect.appendTo("#multiScreenSvg");
-                        
-                        clicked.posX=e.offsetX;
-                        clicked.posY=e.offsetY;
-
-                        if(resizeCursor==0){
-                            resizable=false; 
-                            
-                        }  
-                        else
-                            resizable=true;  
+                         
                     } 
+                    clicked.posX=e.offsetX;
+                    clicked.posY=e.offsetY; 
                 }); 
-            } 
-
-            function resizeElement($elmnt){  
-                $elmnt.mousemove(function(e){ 
-                    if(clickedRect.attr("id")==$(this).attr("id")&& svgMouseDown==false ){
-                        
-                        var $currentX=Number(e.offsetX); 
-                        var $currentY=Number(e.offsetY);
-                        var $x=Number( $elmnt.attr("x"));
-                        var $y=Number($elmnt.attr("y"));
-                        var $width=Number($elmnt.attr("width"));
-                        var $height=Number($elmnt.attr("height")); 
-                        
-                        $topLine= $currentY <=$y+resizeCursorSensitive ;
-                        $bottomLine=  $currentY >= ($y+$height)-resizeCursorSensitive ;
-                        $leftLine=$currentX <= $x+resizeCursorSensitive;
-                        $rightLine= $currentX >= ($x+$width)-resizeCursorSensitive ;
-
-                        $heightLength= $currentY > ($y+10) && $currentY<($y+$height-10) ;
-                        $widthLength= $currentX > ($x+10) && $currentX<($x+$width-10) ;
-                        
-                        if(!rectMouseDown){  
-                            if( $leftLine && $topLine ){
-                                $elmnt.css("cursor","se-resize"); 
-                                resizeCursor=7;  
-                            }
-                            else if( $rightLine && $bottomLine ){
-                                $elmnt.css("cursor","se-resize");
-                                resizeCursor=3; 
-                            }
-                            else if(  $rightLine && $topLine){
-                                $elmnt.css("cursor","sw-resize");  
-                                resizeCursor=9; 
-
-                            } 
-                            else if( $leftLine &&  $bottomLine){
-                                $elmnt.css("cursor","sw-resize");  
-                                resizeCursor=1;      
-                            }     
-                            else if(  $bottomLine  && $widthLength ){
-                                $elmnt.css("cursor","s-resize");        
-                                resizeCursor=2;
-                            }
-                            else if( $rightLine  && $heightLength ){
-                                $elmnt.css("cursor","e-resize");        
-                                resizeCursor=6;
-                            } 
-                            else if(  $topLine  && $widthLength ){
-                                $elmnt.css("cursor","s-resize");        
-                                resizeCursor=8;
-                            }
-                            else if(  $leftLine  && $heightLength ){
-                                $elmnt.css("cursor","e-resize");        
-                                resizeCursor=4;
-                            } 
-                            else {
-                                $elmnt.css("cursor","pointer");  
-                                resizeCursor=0; 
-                            }
-                            
-                        }     
-                    }
-                    else{
-                        if(!resizable){
-                            $elmnt.css("cursor","pointer");  
-                            resizeCursor=0;
-                        }
-                            
-                    } 
-                }); 
-                 
-                
             }  
+
         </script>
     </body>
 </html>
