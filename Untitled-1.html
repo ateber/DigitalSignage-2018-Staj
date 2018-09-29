@@ -14,16 +14,150 @@
             </p>
             <div  >
             <svg id="multiScreenSvg"  width="683" height="384" style=" width:683px;height:384px;background-color:rgba(2, 2, 14, 0.938) ;border:50px solid grey">  
-                <!-- <rect x="50" y="50" width="50" height="50" style=" fill: aqua;"></rect> -->
+             
+                    <rect id="leftResponsivePanel" fill="#01000383" stroke="blue" rx="5" x="100" y="100"  opacity="0"      width="10" height="40" />
+                    <rect id="rightResponsivePanel" fill="#01000383" stroke="blue" rx="5" x="150" y="100" opacity="0"    width="10" height="40" />
+                    <rect id="bottomResponsivePanel" fill="#01000383" stroke="blue" rx="5" x="110" y="140" opacity="0"    width="40" height="10" />
+                    <rect id="topResponsivePanel" fill="#01000383" stroke="blue" rx="5" x="110" y="90"  opacity="0"   width="40" height="10" /> 
+                 
+                <!-- <rect x="50" y="50" width="50" height="50"  style=" fill: none; stroke:blueviolet;stroke-width:15;stroke-dasharray: 0 10 30 10"></rect> 
+                <ellipse cx="255" cy="255" rx="50" ry="50" style="fill:none;stroke: #01000383;stroke-width:30;stroke-dasharray:50 215 ; " />
+                -->
             </svg> 
             </div>
         
         <script>
+            responsivePanelWidth=10;
+            //responsivePanelHeight=40;
+            responsivePanelsDistConst=5;
+            responsivePanelEntered=false;
+            responsivePanelShow=false;
+            function showResponsivePanelOnRect($rect){ 
+                $width=Number($rect.attr("width"));
+                $height=Number($rect.attr("height"));
+                $x=Number($rect.attr("x"));
+                $y=Number($rect.attr("y")); 
+                $leftResponsivePanel= $("#leftResponsivePanel");
+                $rightResponsivePanel=$("#rightResponsivePanel");
+                $topResponsivePanel=$("#topResponsivePanel");
+                $bottomResponsivePanel=$("#bottomResponsivePanel");
+
+                $leftResponsivePanel.attr("y",($y+responsivePanelWidth));
+                $leftResponsivePanel.attr("x",$x);
+                $leftResponsivePanel.attr("width",responsivePanelWidth);
+                $leftResponsivePanel.attr("height",$height-2*responsivePanelWidth);
+
+                $rightResponsivePanel.attr("y",($y+responsivePanelWidth));
+                $rightResponsivePanel.attr("x",($x+$width-responsivePanelWidth));
+                $rightResponsivePanel.attr("width",responsivePanelWidth);
+                $rightResponsivePanel.attr("height",$height-2*responsivePanelWidth);
+
+                $topResponsivePanel.attr("x",($x+responsivePanelWidth));
+                $topResponsivePanel.attr("y",$y);
+                $topResponsivePanel.attr("width",$width-2*responsivePanelWidth);
+                $topResponsivePanel.attr("height",responsivePanelWidth); 
+
+                $bottomResponsivePanel.attr("x",($x+responsivePanelWidth));
+                $bottomResponsivePanel.attr("y",($y+$height-responsivePanelWidth));
+                $bottomResponsivePanel.attr("width",$width-2*responsivePanelWidth);
+                $bottomResponsivePanel.attr("height",responsivePanelWidth); 
+
+                responsivePanelShow=true; 
+                $leftResponsivePanel.attr("opacity",0.5); 
+                $rightResponsivePanel.attr("opacity",0.5);
+                $topResponsivePanel.attr("opacity",0.5);
+                $bottomResponsivePanel.attr("opacity",0.5);
+
+                $leftResponsivePanel.appendTo("#multiScreenSvg");
+                $rightResponsivePanel.appendTo("#multiScreenSvg");
+                $topResponsivePanel.appendTo("#multiScreenSvg");
+                $bottomResponsivePanel.appendTo("#multiScreenSvg");
+            }
+
+            function hideResponsivePanel(){ 
+                if(!responsivePanelEntered){
+                    $leftResponsivePanel= $("#leftResponsivePanel");
+                    $rightResponsivePanel=$("#rightResponsivePanel");
+                    $topResponsivePanel=$("#topResponsivePanel");
+                    $bottomResponsivePanel=$("#bottomResponsivePanel");
+                    responsivePanelShow=false; 
+                    $leftResponsivePanel.attr("opacity",0); 
+                    $rightResponsivePanel.attr("opacity",0);
+                    $topResponsivePanel.attr("opacity",0);
+                    $bottomResponsivePanel.attr("opacity",0);
+                }
+                
+            }
+
+            function responsiveElmntEnteredStyle($elmnt){  
+                $elmnt.mouseenter( function(e){
+                    responsivePanelEntered=true; 
+                    if($(this).attr("opacity")>0){ 
+                        $(this).attr("opacity",1);
+                        $(this).attr("stroke","yellow");
+                        $(this).attr("fill","black");
+                    }
+                    
+                });
+            }
+
+            function responsiveElmntLeaveStyle($elmnt){
+                $elmnt.mouseleave(function(e){
+                    responsivePanelEntered=false;
+                    if($(this).attr("opacity")>0){
+                        $(this).attr("opacity",0.5);
+                        $(this).attr("stroke","blue");
+                        $(this).attr("fill","#01000383");
+                    }
+                }); 
+            }
+
+
+            function buildResponsivePanel(){
+                
+                $("rect").each(function( ){  
+                    responsiveElmntEnteredStyle($(this));
+                    responsiveElmntLeaveStyle($(this));
+                }); 
+
+                $("#leftResponsivePanel").mouseup(function(e){ 
+                    if(responsivePanelShow){
+                        if(resizable){
+
+                        }    
+                    } 
+                });
+                $("#rightResponsivePanel").mouseup(function(e){ 
+                    if(responsivePanelShow){
+                        if(resizable){ 
+                        }    
+                    }
+                });
+                $("#topResponsivePanel").mouseup(function(e){ 
+                    if(responsivePanelShow){
+                        if(resizable){
+
+                        }    
+                    }
+                });
+                $("#bottomResponsivePanel").mouseup(function(e){ 
+                    if(responsivePanelShow){
+                        if(resizable){ 
+                        }    
+                    }
+                });
+            }
+
+            $(function(){
+                buildResponsivePanel(); 
+            });
+             
             var clicked={
                 posX:-1,
                 posY:-1
             } 
             var svgMouseEnter=false;
+            var rectDragging=false;
             var resizable=false;
             var resizeCursor=0;
             var resizeCursorSensitive=8;
@@ -35,12 +169,15 @@
             $("#rect-1").css("x","100");
             $("#rect-1").css("y","100");
             $("#multiScreenSvg").mousedown(function (e){ 
+                $("rect").each(function(){
+                    console.log($(this));
+                   // $(this).triggerHandler("mouseenter",e); 
+                });
+
                 if(!resizable){
                     clicked.posX=e.offsetX;
                     clicked.posY=e.offsetY;
-                }
-               
-
+                } 
                 if(resizeCursor==0){
                     resizable=false;  
                 }  
@@ -67,7 +204,7 @@
                             height: 0  
                         })
                         .css({  
-                            fill: "green", 
+                            fill: "black", 
                             "outline-style": "solid ",
                             "outline-color":"red ",  
                             "outline-width": "thin", 
@@ -78,9 +215,9 @@
                             BlueStrokeStyle(clickedRect);
                             StrokeDasharrayStyle(clickedRect,2,2);
                         }
-                        clickedRect=$rect;    
-                        
-                        $rect.appendTo("#multiScreenSvg"); 
+                        clickedRect=$rect;  
+                        $rect.appendTo("#multiScreenSvg");
+                         
                     }
                     
                 } 
@@ -114,10 +251,9 @@
             
             
             $("#multiScreenSvg").mousemove(function(e){ 
-                //console.log(e.offsetX+ " " +e.offsetY); 
-                 
-
-                if(clickedRect!=null&&!svgMouseDown     ){ 
+                //console.log(e.offsetX+ " " +e.offsetY);  
+                if(clickedRect!=null){
+                    if(!svgMouseDown){ 
                         var $currentX=Number(e.offsetX); 
                         var $currentY=Number(e.offsetY);
                         var $x=Number( clickedRect.attr("x"));
@@ -171,10 +307,11 @@
                                 document.body.style.cursor="default";  
                                 resizeCursor=0; 
                             } 
-                        }     
+                        } 
+                         
                     }
 
-                    if(resizable){  
+                    if( resizable){  
                         var $posX=e.offsetX;
                         var $posY=e.offsetY;
                         var $width=Number(clickedRect.attr("width"));    
@@ -211,7 +348,7 @@
 
                         if(resizeCursor==1){
                             clickedRect.attr("x",x+($posX-clicked.posX));
-                             
+                            
                             if ($posX>clicked.posX)
                                 $width=$width-$lenthDiffX;
                             else
@@ -276,12 +413,12 @@
                     }  
 
                     else if(rectMouseDown){ 
-                         
+                        rectDragging=true; 
                         var $x= Number(clickedRect.attr("x"));
                         var $y= Number(clickedRect.attr("y"));
                         var $lenthDiffX=e.offsetX - clicked.posX;
                         var $lenthDiffY=e.offsetY - clicked.posY;  
-                       
+                    
                         clickedRect.attr("x",($x+$lenthDiffX));
                         clickedRect.attr("y",($y+$lenthDiffY));    
                         
@@ -290,82 +427,86 @@
                     }
 
                     else if(svgMouseDown ){  
-                       
-                    clickedRect.attr("x",clicked.posX);
-                    clickedRect.attr("y",clicked.posY);
-                    var $posX=e.offsetX;
-                    var $posY=e.offsetY;
-                     
-                    if($posX<clicked.posX){
-                        clickedRect.attr("x",$posX); 
+                    
+                        clickedRect.attr("x",clicked.posX);
+                        clickedRect.attr("y",clicked.posY);
+                        var $posX=e.offsetX;
+                        var $posY=e.offsetY;
+                        
+                        if($posX<clicked.posX){
+                            clickedRect.attr("x",$posX); 
+                        }  
+                        if($posY<clicked.posY) { 
+                            clickedRect.attr("y",$posY);
+                        } 
+                        clickedRect.attr("width",Math.abs($posX-clicked.posX));
+                        clickedRect.attr("height",Math.abs($posY-clicked.posY)); 
                     }  
-                    if($posY<clicked.posY) { 
-                        clickedRect.attr("y",$posY);
-                    } 
-                    clickedRect.attr("width",Math.abs($posX-clicked.posX));
-                    clickedRect.attr("height",Math.abs($posY-clicked.posY)); 
-                }  
-                 
+                }      
             });
- 
+            
             
             $(window).on("mouseup",function(){
                 
-                
-                var $width=Number(clickedRect.attr("width"));
-                var $height=Number(clickedRect.attr("height"));
-                var $x=Number(clickedRect.attr("x"));
-                var $y=Number(clickedRect.attr("y"));
-
-                if(resizable ||svgMouseDown){
-                    if($x<1){
-                        clickedRect.attr("x",1);
-                        clickedRect.attr("width",(($x-1)+$width)) ;
-                    }
-                    else if(($x+$width)>682){ 
-                         
-                        clickedRect.attr("width",682-$x) ;
-                    }    
-                    if($y<1){
-                        clickedRect.attr("y",1);
-                        clickedRect.attr("height",(($y-1)+$height )) ; 
-                    }
-                    if(($y+$height)>383){ 
-                        clickedRect.attr("height",383-$y) ;
-                    }
-                }
-
-                if(svgMouseDown){   
-                    rectCount++;
-                    svgMouseDown=false;
-                    if(clickedRect.attr("width")<30||clickedRect.attr("height")<30){
-                        clickedRect.remove();
-                        clickedRect=null;
-                    } 
-                }  
-
-                if(rectMouseDown){
-                    if($x<1){
-                        clickedRect.attr("x",1); 
-                    }
-                    else if(($x+$width)>682){  
-                        clickedRect.attr("x",682-$width) ;
-                    }    
-                    if($y<1){
-                        clickedRect.attr("y",1); 
-                    }
-                    if(($y+$height)>383){ 
-                        clickedRect.attr("y",383-$height) ;
-                    }
-                }
+                if(clickedRect!=null){
                     
+                    RedStrokeStyle(clickedRect);
+                    StrokeDasharrayStyle(clickedRect,2,2); 
+                    var $width=Number(clickedRect.attr("width"));
+                    var $height=Number(clickedRect.attr("height"));
+                    var $x=Number(clickedRect.attr("x"));
+                    var $y=Number(clickedRect.attr("y"));
+                    
+                    if(resizable ||svgMouseDown){
+                        if($x<1){
+                            clickedRect.attr("x",1);
+                            clickedRect.attr("width",(($x-1)+$width));
+                            $x=1;
+                        }
+                        if(($x+$width)>682){  
+                            clickedRect.attr("width",682-$x) ;
+                        }    
+                        if($y<1){
+                            clickedRect.attr("y",1);
+                            clickedRect.attr("height",(($y-1)+$height )) ;
+                            $y=1; 
+                        }
+                        if(($y+$height)>383){ 
+                            clickedRect.attr("height",383-$y) ;
+                        }
+                    }
 
-                RedStrokeStyle(clickedRect);
-                StrokeDasharrayStyle(clickedRect,2,2); 
-                rectMouseDown=false; 
-                 
+                    if(svgMouseDown){   
+                        rectCount++;
+                        svgMouseDown=false;
+                        if(clickedRect.attr("width")<30||clickedRect.attr("height")<30){
+                            clickedRect.remove();
+                            clickedRect=null;
+                        } 
+                    }   
+
+                    if(rectDragging){
+                        if($x<1){
+                            clickedRect.attr("x",1); 
+                        }
+                        else if(($x+$width)>682){  
+                            clickedRect.attr("x",682-$width) ;
+                        }    
+                        if($y<1){
+                            clickedRect.attr("y",1); 
+                        }
+                        if(($y+$height)>383){ 
+                            clickedRect.attr("y",383-$height) ;
+                        }
+                    }  
+                }  
                 document.body.style.cursor="default"; 
-                resizable=false;  
+                rectMouseDown=false;  
+                rectDragging=false;
+                resizable=false; 
+                resizeCursor=0; 
+                hideResponsivePanel();
+               
             }); 
               
 
@@ -388,13 +529,24 @@
              
 
             function dragElement($elmnt){  
+                $elmnt.mouseenter(function(e){  
+                    if(resizable&&clickedRect.attr("id")!=$(this).attr("id")){
+                        console.log("geldi"); 
+                        showResponsivePanelOnRect($elmnt);
+                    }
+                });
+                $elmnt.mouseleave(function(e){  
+                   // hideResponsivePanel();
+                });
                 $elmnt.mousedown(function(e){
+                    
                     if(resizeCursor==0){
                         resizable=false;  
                     }  
                     else{
                         resizable=true;
-                    } 
+                    }  
+
                     if(!rectMouseDown&&!resizable){ 
                         //console.log("rectMouseDown");
                         rectMouseDown=true; 
@@ -402,7 +554,7 @@
                             BlueStrokeStyle(clickedRect);
                             StrokeDasharrayStyle(clickedRect,2,2); 
                         }   
-                        clickedRect=$(this);
+                        clickedRect=$(this); 
                         RedStrokeStyle(clickedRect);
                         StrokeDasharrayStyle(clickedRect,0,0); 
                         clickedRect.appendTo("#multiScreenSvg");
@@ -411,6 +563,12 @@
                     clicked.posX=e.offsetX;
                     clicked.posY=e.offsetY; 
                 }); 
+
+                $elmnt.mousemove(function(e){ 
+                    if(resizable){ 
+
+                    }
+                });
             }  
 
         </script>
