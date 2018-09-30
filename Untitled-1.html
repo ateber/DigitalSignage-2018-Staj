@@ -15,10 +15,10 @@
             <div  >
             <svg id="multiScreenSvg"  width="683" height="384" style=" width:683px;height:384px;background-color:rgba(2, 2, 14, 0.938) ;border:50px solid grey">  
              
-                    <rect id="leftResponsivePanel" fill="#01000383" stroke="blue" rx="5" x="100" y="100"  opacity="0"      width="10" height="40" />
-                    <rect id="rightResponsivePanel" fill="#01000383" stroke="blue" rx="5" x="150" y="100" opacity="0"    width="10" height="40" />
-                    <rect id="bottomResponsivePanel" fill="#01000383" stroke="blue" rx="5" x="110" y="140" opacity="0"    width="40" height="10" />
-                    <rect id="topResponsivePanel" fill="#01000383" stroke="blue" rx="5" x="110" y="90"  opacity="0"   width="40" height="10" /> 
+                    <rect id="leftResponsivePanel" fill="#01000383" stroke="blue"   x="0" y="0"  opacity="0"      width="10" height="40" />
+                    <rect id="rightResponsivePanel" fill="#01000383" stroke="blue"   x="0" y="0" opacity="0"    width="10" height="40" />
+                    <rect id="bottomResponsivePanel" fill="#01000383" stroke="blue"  x="0" y="0" opacity="0"    width="40" height="10" />
+                    <rect id="topResponsivePanel" fill="#01000383" stroke="blue"   x="0" y="0"  opacity="0"   width="40" height="10" /> 
                  
                 <!-- <rect x="50" y="50" width="50" height="50"  style=" fill: none; stroke:blueviolet;stroke-width:15;stroke-dasharray: 0 10 30 10"></rect> 
                 <ellipse cx="255" cy="255" rx="50" ry="50" style="fill:none;stroke: #01000383;stroke-width:30;stroke-dasharray:50 215 ; " />
@@ -27,12 +27,14 @@
             </div>
         
         <script>
+            rectMouseOver=false;
             responsivePanelWidth=10;
             //responsivePanelHeight=40;
             responsivePanelsDistConst=5;
             responsivePanelEntered=false;
             responsivePanelShow=false;
             function showResponsivePanelOnRect($rect){ 
+                responsivePanelShow=true; 
                 $width=Number($rect.attr("width"));
                 $height=Number($rect.attr("height"));
                 $x=Number($rect.attr("x"));
@@ -60,54 +62,60 @@
                 $bottomResponsivePanel.attr("x",($x+responsivePanelWidth));
                 $bottomResponsivePanel.attr("y",($y+$height-responsivePanelWidth));
                 $bottomResponsivePanel.attr("width",$width-2*responsivePanelWidth);
-                $bottomResponsivePanel.attr("height",responsivePanelWidth); 
-
-                responsivePanelShow=true; 
+                $bottomResponsivePanel.attr("height",responsivePanelWidth);  
+                
                 $leftResponsivePanel.attr("opacity",0.5); 
                 $rightResponsivePanel.attr("opacity",0.5);
                 $topResponsivePanel.attr("opacity",0.5);
                 $bottomResponsivePanel.attr("opacity",0.5);
 
+                $leftResponsivePanel.css("pointer-events","auto");
+                $rightResponsivePanel.css("pointer-events","auto");
+                $topResponsivePanel.css("pointer-events","auto");
+                $bottomResponsivePanel.css("pointer-events","auto");
+                
                 $leftResponsivePanel.appendTo("#multiScreenSvg");
                 $rightResponsivePanel.appendTo("#multiScreenSvg");
                 $topResponsivePanel.appendTo("#multiScreenSvg");
                 $bottomResponsivePanel.appendTo("#multiScreenSvg");
             }
+            function hideResponsivePanel($pnl){ 
+                $pnl.attr("opacity",0);  
+                $pnl.css("pointer-events","none"); 
+                $pnl.attr("stroke","blue");
+                $pnl.attr("fill","#01000383");
+                $pnl.attr("stroke-dasharray","2 2"); 
+            }
 
-            function hideResponsivePanel(){ 
-                if(!responsivePanelEntered){
-                    $leftResponsivePanel= $("#leftResponsivePanel");
-                    $rightResponsivePanel=$("#rightResponsivePanel");
-                    $topResponsivePanel=$("#topResponsivePanel");
-                    $bottomResponsivePanel=$("#bottomResponsivePanel");
-                    responsivePanelShow=false; 
-                    $leftResponsivePanel.attr("opacity",0); 
-                    $rightResponsivePanel.attr("opacity",0);
-                    $topResponsivePanel.attr("opacity",0);
-                    $bottomResponsivePanel.attr("opacity",0);
-                }
-                
+            function hideResponsivePanels(){  
+                responsivePanelShow=false;
+                hideResponsivePanel($("#leftResponsivePanel"));
+                hideResponsivePanel($("#rightResponsivePanel"));
+                hideResponsivePanel($("#topResponsivePanel"));
+                hideResponsivePanel($("#bottomResponsivePanel")); 
             }
 
             function responsiveElmntEnteredStyle($elmnt){  
                 $elmnt.mouseenter( function(e){
                     responsivePanelEntered=true; 
-                    if($(this).attr("opacity")>0){ 
+                    if(responsivePanelShow){ 
                         $(this).attr("opacity",1);
                         $(this).attr("stroke","yellow");
-                        $(this).attr("fill","black");
-                    }
-                    
+                        $(this).attr("stroke-dasharray","0");
+                        $(this).attr("fill","#091010");
+                    } 
                 });
             }
 
             function responsiveElmntLeaveStyle($elmnt){
-                $elmnt.mouseleave(function(e){
+                $elmnt.mouseleave(function(e){ 
+                    console.log("geldiii");
                     responsivePanelEntered=false;
-                    if($(this).attr("opacity")>0){
+                    if(responsivePanelShow){
                         $(this).attr("opacity",0.5);
                         $(this).attr("stroke","blue");
                         $(this).attr("fill","#01000383");
+                        $(this).attr("stroke-dasharray","2 2"); 
                     }
                 }); 
             }
@@ -123,26 +131,69 @@
                 $("#leftResponsivePanel").mouseup(function(e){ 
                     if(responsivePanelShow){
                         if(resizable){
-
+                            $targetX=Number($(this).attr("x"));
+                            $resizedX=Number(clickedRect.attr("x"));
+                            $targetWidth=Number($(this).attr("width"));
+                            $resizedWidth=Number(clickedRect.attr("width"));
+                            if(resizeCursor==6){
+                                clickedRect.attr("width",$targetX-$resizedX-2);
+                            }
+                            if(resizeCursor==4){
+                                clickedRect.attr("x",$targetX);
+                                clickedRect.attr("width",$resizedWidth+$resizedX-$targetX);
+                            } 
                         }    
                     } 
                 });
                 $("#rightResponsivePanel").mouseup(function(e){ 
                     if(responsivePanelShow){
                         if(resizable){ 
+                            $targetX=Number($(this).attr("x"));
+                            $resizedX=Number(clickedRect.attr("x"));
+                            $targetWidth=Number($(this).attr("width"));
+                            $resizedWidth=Number(clickedRect.attr("width"));
+                            if(resizeCursor==6){
+                                clickedRect.attr("width",$targetWidth+$targetX-$resizedX);
+                            } 
+                            if(resizeCursor==4){
+                                clickedRect.attr("x",$targetX+$targetWidth+2);
+                                clickedRect.attr("width",$resizedWidth+$resizedX-($targetX+$targetWidth+2));
+                            }
+                            
                         }    
                     }
                 });
                 $("#topResponsivePanel").mouseup(function(e){ 
                     if(responsivePanelShow){
                         if(resizable){
-
+                            $targetY=Number($(this).attr("y"));
+                            $resizedY=Number(clickedRect.attr("y"));
+                            $targetHeight=Number($(this).attr("height"));
+                            $resizedHeight=Number(clickedRect.attr("height"));     
+                            if(resizeCursor==2){ 
+                                clickedRect.attr("height",$targetY-$resizedY-2);
+                            } 
+                            if(resizeCursor==8){
+                                clickedRect.attr("y",$targetY);
+                                clickedRect.attr("height",$resizedHeight+$resizedY-$targetY); 
+                            }
                         }    
                     }
                 });
                 $("#bottomResponsivePanel").mouseup(function(e){ 
                     if(responsivePanelShow){
                         if(resizable){ 
+                            $targetY=Number($(this).attr("y"));
+                            $resizedY=Number(clickedRect.attr("y"));
+                            $targetHeight=Number($(this).attr("height"));
+                            $resizedHeight=Number(clickedRect.attr("height"));     
+                            if(resizeCursor==2){ 
+                                clickedRect.attr("height",$targetHeight+$targetY-$resizedY);
+                            } 
+                            if(resizeCursor==8){
+                                clickedRect.attr("y",$targetY+$targetHeight+2);
+                                clickedRect.attr("height",$resizedHeight+$resizedY-($targetY+$targetHeight+2));
+                            }
                         }    
                     }
                 });
@@ -168,12 +219,7 @@
             svgNS="http://www.w3.org/2000/svg";
             $("#rect-1").css("x","100");
             $("#rect-1").css("y","100");
-            $("#multiScreenSvg").mousedown(function (e){ 
-                $("rect").each(function(){
-                    console.log($(this));
-                   // $(this).triggerHandler("mouseenter",e); 
-                });
-
+            $("#multiScreenSvg").mousedown(function (e){  
                 if(!resizable){
                     clicked.posX=e.offsetX;
                     clicked.posY=e.offsetY;
@@ -188,7 +234,7 @@
                 if(clickedRect!=null&&!rectMouseDown&&!resizable){
                     BlueStrokeStyle(clickedRect);
                     clickedRect=null;
-                }  
+                }   
 
                 if(!rectMouseDown){
                     svgMouseDown=true; 
@@ -216,43 +262,24 @@
                             StrokeDasharrayStyle(clickedRect,2,2);
                         }
                         clickedRect=$rect;  
-                        $rect.appendTo("#multiScreenSvg");
-                         
+                        $rect.appendTo("#multiScreenSvg"); 
                     }
                     
                 } 
             }); 
-
-            $(window).on("mousemove",function(e){
-                 
-            });
-
-            $("#multiScreenSvg").mouseleave(function(e){
-              /*  
-                console.log("aloo : "+e.offsetX + " " + e.offsetY);
-                console.log(e.offsetX+ " " +e.offsetY); 
-                if(resizable){ 
-                    var $x=clickedRect.attr("x");
-                    var $y=clickedRect.attr("y");
-                    var $width=Number(clickedRect.attr("width"));
-                    var $height=Number(clickedRect.attr("height"));
-                    if(e.offsetX<0){ 
-                        clickedRect.attr("x",1);
-                        clickedRect.attr("width",(($x-1)+$width)) ;
-                    } 
-                    if(e.offsetY<0){
-                        clickedRect.attr("y",1);
-                        clickedRect.attr("height",(($y-1)+$height )) ;
-                    } 
-                } */
+ 
+            $("#multiScreenSvg").mouseleave(function(e){ 
                 if(!resizable)
                     document.body.style.cursor="default"; 
             });
             
             
             $("#multiScreenSvg").mousemove(function(e){ 
+                
                 //console.log(e.offsetX+ " " +e.offsetY);  
-                if(clickedRect!=null){
+                if(clickedRect!=null){ 
+                    if(resizable&&!rectMouseOver&&!responsivePanelEntered)
+                        hideResponsivePanels();
                     if(!svgMouseDown){ 
                         var $currentX=Number(e.offsetX); 
                         var $currentY=Number(e.offsetY);
@@ -304,7 +331,10 @@
                                 resizeCursor=4;
                             } 
                             else {
-                                document.body.style.cursor="default";  
+                                if(rectMouseOver)
+                                    document.body.style.cursor="pointer"; 
+                                else
+                                    document.body.style.cursor="default"; 
                                 resizeCursor=0; 
                             } 
                         } 
@@ -404,11 +434,12 @@
                             else
                                 $width=$width-$lenthDiffX;
                         }   
-
+                        clickedRect.css("pointer-events","none"); 
                         clickedRect.attr("width",$width );
                         clickedRect.attr("height",$height);
                         clicked.posX=$posX;
-                        clicked.posY=$posY; 
+                        clicked.posY=$posY;
+                         
                         
                     }  
 
@@ -449,7 +480,11 @@
             $(window).on("mouseup",function(){
                 
                 if(clickedRect!=null){
-                    
+                    if(resizable){
+                        clickedRect.appendTo("#multiScreenSvg"); 
+                        clickedRect.css("pointer-events","auto");
+                    }
+                        
                     RedStrokeStyle(clickedRect);
                     StrokeDasharrayStyle(clickedRect,2,2); 
                     var $width=Number(clickedRect.attr("width"));
@@ -461,7 +496,9 @@
                         if($x<1){
                             clickedRect.attr("x",1);
                             clickedRect.attr("width",(($x-1)+$width));
+                            $width=$width+$x;
                             $x=1;
+                            
                         }
                         if(($x+$width)>682){  
                             clickedRect.attr("width",682-$x) ;
@@ -469,20 +506,23 @@
                         if($y<1){
                             clickedRect.attr("y",1);
                             clickedRect.attr("height",(($y-1)+$height )) ;
+                            $height=$height+$y;
                             $y=1; 
                         }
                         if(($y+$height)>383){ 
+                            console.log("helppp"+$height);
                             clickedRect.attr("height",383-$y) ;
-                        }
+                        } 
                     }
-
-                    if(svgMouseDown){   
-                        rectCount++;
+                    
+                    if(svgMouseDown){  
                         svgMouseDown=false;
                         if(clickedRect.attr("width")<30||clickedRect.attr("height")<30){
                             clickedRect.remove();
                             clickedRect=null;
                         } 
+                        else
+                            rectCount++;
                     }   
 
                     if(rectDragging){
@@ -499,14 +539,19 @@
                             clickedRect.attr("y",383-$height) ;
                         }
                     }  
+
+                    
                 }  
+                
                 document.body.style.cursor="default"; 
                 rectMouseDown=false;  
                 rectDragging=false;
                 resizable=false; 
                 resizeCursor=0; 
-                hideResponsivePanel();
-               
+                responsivePanelEntered=false;
+                responsivePanelShow=false;
+                hideResponsivePanels();
+                
             }); 
               
 
@@ -526,20 +571,15 @@
                 }); 
             }
 
-             
+            
 
-            function dragElement($elmnt){  
-                $elmnt.mouseenter(function(e){  
-                    if(resizable&&clickedRect.attr("id")!=$(this).attr("id")){
-                        console.log("geldi"); 
-                        showResponsivePanelOnRect($elmnt);
-                    }
+            function dragElement($elmnt){   
+                $elmnt.mouseleave(function(e){ 
+                    rectMouseOver=false;  
                 });
-                $elmnt.mouseleave(function(e){  
-                   // hideResponsivePanel();
-                });
+
                 $elmnt.mousedown(function(e){
-                    
+                    console.log("gedlii"); 
                     if(resizeCursor==0){
                         resizable=false;  
                     }  
@@ -547,8 +587,7 @@
                         resizable=true;
                     }  
 
-                    if(!rectMouseDown&&!resizable){ 
-                        //console.log("rectMouseDown");
+                    if(!rectMouseDown&&!resizable){  
                         rectMouseDown=true; 
                         if(clickedRect!=null){
                             BlueStrokeStyle(clickedRect);
@@ -557,16 +596,18 @@
                         clickedRect=$(this); 
                         RedStrokeStyle(clickedRect);
                         StrokeDasharrayStyle(clickedRect,0,0); 
-                        clickedRect.appendTo("#multiScreenSvg");
-                         
+                        clickedRect.appendTo("#multiScreenSvg"); 
                     } 
                     clicked.posX=e.offsetX;
                     clicked.posY=e.offsetY; 
                 }); 
 
-                $elmnt.mousemove(function(e){ 
-                    if(resizable){ 
-
+                $elmnt.mousemove(function(e){  
+                    rectMouseOver=true; 
+                    if(resizable&&$(this).attr("id")!=clickedRect.attr("id")){ 
+                        $(this).appendTo("#multiScreenSvg");
+                        clickedRect.appendTo("#multiScreenSvg");
+                        showResponsivePanelOnRect($elmnt);
                     }
                 });
             }  
