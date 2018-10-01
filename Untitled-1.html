@@ -2,7 +2,7 @@
 <html>
     <head>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-        <meta name="viewport" content="width=200, initial-scale=1.0"/>
+     
         <style>  
         </style>
     </head>
@@ -12,73 +12,94 @@
                 Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat. Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim qui blandit praesent luptatum zzril delenit augue duis dolore te feugait nulla facilisi. Nam liber tempor cum soluta nobis eleifend option congue nihil imperdiet doming id quod mazim placerat facer possim assum.
                 Nam liber tempor cum soluta nobis eleifend option congue nihil imperdiet doming id quod mazim placerat facer possim assum.
             </p>
+
             <div  >
-            <svg id="multiScreenSvg"  width="683" height="384" style=" width:683px;height:384px;background-color:rgba(2, 2, 14, 0.938) ;border:50px solid grey">  
-             
+                <svg id="multiScreenSvg"  width="683" height="384" style=" width:683px;height:384px;background-color:rgba(2, 2, 14, 0.938) ;border:50px solid grey">  
                     <rect id="leftResponsivePanel" fill="#01000383" stroke="blue"   x="0" y="0"  opacity="0"      width="10" height="40" />
                     <rect id="rightResponsivePanel" fill="#01000383" stroke="blue"   x="0" y="0" opacity="0"    width="10" height="40" />
                     <rect id="bottomResponsivePanel" fill="#01000383" stroke="blue"  x="0" y="0" opacity="0"    width="40" height="10" />
                     <rect id="topResponsivePanel" fill="#01000383" stroke="blue"   x="0" y="0"  opacity="0"   width="40" height="10" /> 
-                 
-                <!-- <rect x="50" y="50" width="50" height="50"  style=" fill: none; stroke:blueviolet;stroke-width:15;stroke-dasharray: 0 10 30 10"></rect> 
-                <ellipse cx="255" cy="255" rx="50" ry="50" style="fill:none;stroke: #01000383;stroke-width:30;stroke-dasharray:50 215 ; " />
-                -->
-            </svg> 
-            </div>
-        
-        <script>
-            rectMouseOver=false;
-            responsivePanelWidth=10;
-            //responsivePanelHeight=40;
-            responsivePanelsDistConst=5;
-            responsivePanelEntered=false;
-            responsivePanelShow=false;
+                </svg> 
+            </div> 
+        <script> 
+            var uControl={
+                posX:-1,
+                posY:-1,
+                states:{
+                    svgMouseEnter:false,
+                    rectDragging:false,
+                    resizable:false,
+                    resizeCursor:0,
+                    svgMouseDown:false,
+                    rectMouseDown:false,
+                    rectMouseOver:false,
+                    responsivePanelEntered:false,
+                    responsivePanelShow:false
+                },
+                rectCount:0,
+                selectedRect:null,
+            } 
+            var SVG_NS="http://www.w3.org/2000/svg";
+            var RESİZE_CURSOR_SENSITIVE=8; 
+            var RESPONSIVE_PANEL_WIDTH=10; 
+            var RESPONSIVE_PANEL_DIST_CONST=5;
+            var RECT_OUTLINE_OFFSET=0;  
+            var RECT_OUT_STROKE_WIDTH=1;  
+            var STROKE=2*RECT_OUT_STROKE_WIDTH;  
+            var CURRENT_DRAWING_WIDTH=30;
+            var CURRENT_DRAWING_HEIGHT=30;
+            var screenPosX=0+RECT_OUT_STROKE_WIDTH;
+            var screenPosY=0+RECT_OUT_STROKE_WIDTH;
+            var screenWidth=683-RECT_OUT_STROKE_WIDTH;
+            var screenHeight=384-RECT_OUT_STROKE_WIDTH;
+            
             function showResponsivePanelOnRect($rect){ 
-                responsivePanelShow=true; 
-                $width=Number($rect.attr("width"));
-                $height=Number($rect.attr("height"));
-                $x=Number($rect.attr("x"));
-                $y=Number($rect.attr("y")); 
+                uControl.states.responsivePanelShow=true; 
+                localizePanels($rect);
+                showResponsivePanel($("#leftResponsivePanel")); 
+                showResponsivePanel($("#rightResponsivePanel")); 
+                showResponsivePanel($("#topResponsivePanel")); 
+                showResponsivePanel($("#bottomResponsivePanel")); 
+            }
+
+            function localizePanels($rect){
+                $rectWidth=Number($rect.attr("width"));
+                $rectHeight=Number($rect.attr("height"));
+                $rectX=Number($rect.attr("x"));
+                $rectY=Number($rect.attr("y")); 
+                
                 $leftResponsivePanel= $("#leftResponsivePanel");
                 $rightResponsivePanel=$("#rightResponsivePanel");
                 $topResponsivePanel=$("#topResponsivePanel");
                 $bottomResponsivePanel=$("#bottomResponsivePanel");
 
-                $leftResponsivePanel.attr("y",($y+responsivePanelWidth));
-                $leftResponsivePanel.attr("x",$x);
-                $leftResponsivePanel.attr("width",responsivePanelWidth);
-                $leftResponsivePanel.attr("height",$height-2*responsivePanelWidth);
+                $leftResponsivePanel.attr("y",($rectY+RESPONSIVE_PANEL_WIDTH));
+                $leftResponsivePanel.attr("x",$rectX);
+                $leftResponsivePanel.attr("width",RESPONSIVE_PANEL_WIDTH);
+                $leftResponsivePanel.attr("height",$rectHeight-2*RESPONSIVE_PANEL_WIDTH);
 
-                $rightResponsivePanel.attr("y",($y+responsivePanelWidth));
-                $rightResponsivePanel.attr("x",($x+$width-responsivePanelWidth));
-                $rightResponsivePanel.attr("width",responsivePanelWidth);
-                $rightResponsivePanel.attr("height",$height-2*responsivePanelWidth);
+                $rightResponsivePanel.attr("y",($rectY+RESPONSIVE_PANEL_WIDTH));
+                $rightResponsivePanel.attr("x",($rectX+$rectWidth-RESPONSIVE_PANEL_WIDTH));
+                $rightResponsivePanel.attr("width",RESPONSIVE_PANEL_WIDTH);
+                $rightResponsivePanel.attr("height",$rectHeight-2*RESPONSIVE_PANEL_WIDTH);
 
-                $topResponsivePanel.attr("x",($x+responsivePanelWidth));
-                $topResponsivePanel.attr("y",$y);
-                $topResponsivePanel.attr("width",$width-2*responsivePanelWidth);
-                $topResponsivePanel.attr("height",responsivePanelWidth); 
+                $topResponsivePanel.attr("x",($rectX+RESPONSIVE_PANEL_WIDTH));
+                $topResponsivePanel.attr("y",$rectY);
+                $topResponsivePanel.attr("width",$rectWidth-2*RESPONSIVE_PANEL_WIDTH);
+                $topResponsivePanel.attr("height",RESPONSIVE_PANEL_WIDTH); 
 
-                $bottomResponsivePanel.attr("x",($x+responsivePanelWidth));
-                $bottomResponsivePanel.attr("y",($y+$height-responsivePanelWidth));
-                $bottomResponsivePanel.attr("width",$width-2*responsivePanelWidth);
-                $bottomResponsivePanel.attr("height",responsivePanelWidth);  
-                
-                $leftResponsivePanel.attr("opacity",0.5); 
-                $rightResponsivePanel.attr("opacity",0.5);
-                $topResponsivePanel.attr("opacity",0.5);
-                $bottomResponsivePanel.attr("opacity",0.5);
-
-                $leftResponsivePanel.css("pointer-events","auto");
-                $rightResponsivePanel.css("pointer-events","auto");
-                $topResponsivePanel.css("pointer-events","auto");
-                $bottomResponsivePanel.css("pointer-events","auto");
-                
-                $leftResponsivePanel.appendTo("#multiScreenSvg");
-                $rightResponsivePanel.appendTo("#multiScreenSvg");
-                $topResponsivePanel.appendTo("#multiScreenSvg");
-                $bottomResponsivePanel.appendTo("#multiScreenSvg");
+                $bottomResponsivePanel.attr("x",($rectX+RESPONSIVE_PANEL_WIDTH));
+                $bottomResponsivePanel.attr("y",($rectY+$rectHeight-RESPONSIVE_PANEL_WIDTH));
+                $bottomResponsivePanel.attr("width",$rectWidth-2*RESPONSIVE_PANEL_WIDTH);
+                $bottomResponsivePanel.attr("height",RESPONSIVE_PANEL_WIDTH);  
             }
+
+            function showResponsivePanel($pnl){ 
+                $pnl.attr("opacity",0.5);  
+                $pnl.css("pointer-events","auto"); 
+                $pnl.appendTo("#multiScreenSvg"); 
+            }
+ 
             function hideResponsivePanel($pnl){ 
                 $pnl.attr("opacity",0);  
                 $pnl.css("pointer-events","none"); 
@@ -88,17 +109,17 @@
             }
 
             function hideResponsivePanels(){  
-                responsivePanelShow=false;
+                uControl.states.responsivePanelShow=false;
                 hideResponsivePanel($("#leftResponsivePanel"));
                 hideResponsivePanel($("#rightResponsivePanel"));
                 hideResponsivePanel($("#topResponsivePanel"));
                 hideResponsivePanel($("#bottomResponsivePanel")); 
             }
 
-            function responsiveElmntEnteredStyle($elmnt){  
+            function responsiveElmntMouseEnteredStyle($elmnt){  
                 $elmnt.mouseenter( function(e){
-                    responsivePanelEntered=true; 
-                    if(responsivePanelShow){ 
+                    uControl.states.responsivePanelEntered=true; 
+                    if(uControl.states.responsivePanelShow){ 
                         $(this).attr("opacity",1);
                         $(this).attr("stroke","yellow");
                         $(this).attr("stroke-dasharray","0");
@@ -107,11 +128,10 @@
                 });
             }
 
-            function responsiveElmntLeaveStyle($elmnt){
-                $elmnt.mouseleave(function(e){ 
-                    console.log("geldiii");
-                    responsivePanelEntered=false;
-                    if(responsivePanelShow){
+            function responsiveElmntMouseLeaveStyle($elmnt){
+                $elmnt.mouseleave(function(e){  
+                    uControl.states.responsivePanelEntered=false;
+                    if(uControl.states.responsivePanelShow){
                         $(this).attr("opacity",0.5);
                         $(this).attr("stroke","blue");
                         $(this).attr("fill","#01000383");
@@ -119,80 +139,80 @@
                     }
                 }); 
             }
-
-
-            function buildResponsivePanel(){
+ 
+            function buildResponsivePanels(){
                 
                 $("rect").each(function( ){  
-                    responsiveElmntEnteredStyle($(this));
-                    responsiveElmntLeaveStyle($(this));
+                    responsiveElmntMouseEnteredStyle($(this));
+                    responsiveElmntMouseLeaveStyle($(this));
                 }); 
 
                 $("#leftResponsivePanel").mouseup(function(e){ 
-                    if(responsivePanelShow){
-                        if(resizable){
-                            $targetX=Number($(this).attr("x"));
-                            $resizedX=Number(clickedRect.attr("x"));
-                            $targetWidth=Number($(this).attr("width"));
-                            $resizedWidth=Number(clickedRect.attr("width"));
-                            if(resizeCursor==6){
-                                clickedRect.attr("width",$targetX-$resizedX-2);
+                    if(uControl.states.responsivePanelShow){
+                        if(uControl.states.resizable){
+                            $targetRectX=Number($(this).attr("x"));
+                            $resizedRectX=Number(uControl.selectedRect.attr("x"));
+                            $targetRectWidth=Number($(this).attr("width"));
+                            $resizedRectWidth=Number(uControl.selectedRect.attr("width"));
+                            if(uControl.states.resizeCursor==6){
+                                uControl.selectedRect.attr("width",$targetRectX-$resizedRectX-2*(RECT_OUT_STROKE_WIDTH));
                             }
-                            if(resizeCursor==4){
-                                clickedRect.attr("x",$targetX);
-                                clickedRect.attr("width",$resizedWidth+$resizedX-$targetX);
+                            if(uControl.states.resizeCursor==4){
+                                uControl.selectedRect.attr("x",$targetRectX);
+                                uControl.selectedRect.attr("width",$resizedRectWidth+$resizedRectX-$targetRectX);
                             } 
                         }    
                     } 
                 });
+
                 $("#rightResponsivePanel").mouseup(function(e){ 
-                    if(responsivePanelShow){
-                        if(resizable){ 
-                            $targetX=Number($(this).attr("x"));
-                            $resizedX=Number(clickedRect.attr("x"));
-                            $targetWidth=Number($(this).attr("width"));
-                            $resizedWidth=Number(clickedRect.attr("width"));
-                            if(resizeCursor==6){
-                                clickedRect.attr("width",$targetWidth+$targetX-$resizedX);
+                    if(uControl.states.responsivePanelShow){
+                        if(uControl.states.resizable){ 
+                            $targetRectX=Number($(this).attr("x"));
+                            $resizedRectX=Number(uControl.selectedRect.attr("x"));
+                            $targetRectWidth=Number($(this).attr("width"));
+                            $resizedRectWidth=Number(uControl.selectedRect.attr("width"));
+                            if(uControl.states.resizeCursor==6){
+                                uControl.selectedRect.attr("width",$targetRectWidth+$targetRectX-$resizedRectX);
                             } 
-                            if(resizeCursor==4){
-                                clickedRect.attr("x",$targetX+$targetWidth+2);
-                                clickedRect.attr("width",$resizedWidth+$resizedX-($targetX+$targetWidth+2));
+                            if(uControl.states.resizeCursor==4){
+                                uControl.selectedRect.attr("x",$targetRectX+$targetRectWidth+2*(RECT_OUT_STROKE_WIDTH));
+                                uControl.selectedRect.attr("width",$resizedRectWidth+$resizedRectX-($targetRectX+$targetRectWidth+2*(RECT_OUT_STROKE_WIDTH)));
                             }
                             
                         }    
                     }
                 });
                 $("#topResponsivePanel").mouseup(function(e){ 
-                    if(responsivePanelShow){
-                        if(resizable){
-                            $targetY=Number($(this).attr("y"));
-                            $resizedY=Number(clickedRect.attr("y"));
-                            $targetHeight=Number($(this).attr("height"));
-                            $resizedHeight=Number(clickedRect.attr("height"));     
-                            if(resizeCursor==2){ 
-                                clickedRect.attr("height",$targetY-$resizedY-2);
+                    if(uControl.states.responsivePanelShow){
+                        if(uControl.states.resizable){
+                            $targetRectY=Number($(this).attr("y"));
+                            $resizedRectY=Number(uControl.selectedRect.attr("y"));
+                            $targetRectHeight=Number($(this).attr("height"));
+                            $resizedRectHeight=Number(uControl.selectedRect.attr("height"));     
+                            if(uControl.states.resizeCursor==2){ 
+                                uControl.selectedRect.attr("height",$targetRectY-$resizedRectY-2*(RECT_OUT_STROKE_WIDTH));
                             } 
-                            if(resizeCursor==8){
-                                clickedRect.attr("y",$targetY);
-                                clickedRect.attr("height",$resizedHeight+$resizedY-$targetY); 
+                            if(uControl.states.resizeCursor==8){
+                                uControl.selectedRect.attr("y",$targetRectY);
+                                uControl.selectedRect.attr("height",$resizedRectHeight+$resizedRectY-$targetRectY); 
                             }
                         }    
                     }
                 });
                 $("#bottomResponsivePanel").mouseup(function(e){ 
-                    if(responsivePanelShow){
-                        if(resizable){ 
-                            $targetY=Number($(this).attr("y"));
-                            $resizedY=Number(clickedRect.attr("y"));
-                            $targetHeight=Number($(this).attr("height"));
-                            $resizedHeight=Number(clickedRect.attr("height"));     
-                            if(resizeCursor==2){ 
-                                clickedRect.attr("height",$targetHeight+$targetY-$resizedY);
+                    if(uControl.states.responsivePanelShow){
+                        if(uControl.states.resizable){ 
+                            $targetRectY=Number($(this).attr("y"));
+                            $resizedRectY=Number(uControl.selectedRect.attr("y"));
+                            $targetRectHeight=Number($(this).attr("height"));
+                            $resizedRectHeight=Number(uControl.selectedRect.attr("height"));     
+                            if(uControl.states.resizeCursor==2){ 
+                                uControl.selectedRect.attr("height",$targetRectHeight+$targetRectY-$resizedRectY);
                             } 
-                            if(resizeCursor==8){
-                                clickedRect.attr("y",$targetY+$targetHeight+2);
-                                clickedRect.attr("height",$resizedHeight+$resizedY-($targetY+$targetHeight+2));
+                            if(uControl.states.resizeCursor==8){
+                                uControl.selectedRect.attr("y",$targetRectY+$targetRectHeight+2*(RECT_OUT_STROKE_WIDTH));
+                                uControl.selectedRect.attr("height",$resizedRectHeight+$resizedRectY-($targetRectY+$targetRectHeight+2*(RECT_OUT_STROKE_WIDTH)));
                             }
                         }    
                     }
@@ -200,413 +220,378 @@
             }
 
             $(function(){
-                buildResponsivePanel(); 
-            });
-             
-            var clicked={
-                posX:-1,
-                posY:-1
-            } 
-            var svgMouseEnter=false;
-            var rectDragging=false;
-            var resizable=false;
-            var resizeCursor=0;
-            var resizeCursorSensitive=8;
-            var rectCount=0;
-            var clickedRect=null;
-            var svgMouseDown=false;
-            var rectMouseDown=false;
-            svgNS="http://www.w3.org/2000/svg";
-            $("#rect-1").css("x","100");
-            $("#rect-1").css("y","100");
+                buildResponsivePanels(); 
+            }); 
+         
             $("#multiScreenSvg").mousedown(function (e){  
-                if(!resizable){
-                    clicked.posX=e.offsetX;
-                    clicked.posY=e.offsetY;
+                if(!uControl.states.resizable){
+                    uControl.posX=e.offsetX;
+                    uControl.posY=e.offsetY;
                 } 
-                if(resizeCursor==0){
-                    resizable=false;  
+                if(uControl.states.resizeCursor==0){
+                    uControl.states.resizable=false;  
                 }  
                 else{
-                    resizable=true;
+                    uControl.states.resizable=true;
                 } 
                 
-                if(clickedRect!=null&&!rectMouseDown&&!resizable){
-                    BlueStrokeStyle(clickedRect);
-                    clickedRect=null;
+                if(uControl.selectedRect!=null&&!uControl.states.rectMouseDown&&!uControl.states.resizable){
+                    BlueStrokeStyle(uControl.selectedRect);
+                    uControl.selectedRect=null;
                 }   
 
-                if(!rectMouseDown){
-                    svgMouseDown=true; 
-                    if(!resizable){
-                        clicked.posX=e.offsetX;
-                        clicked.posY=e.offsetY;
-                        var $rect = $(document.createElementNS(svgNS, 'rect')) 
+                if(!uControl.states.rectMouseDown){
+                    uControl.states.svgMouseDown=true; 
+                    if(!uControl.states.resizable){
+                        uControl.posX=e.offsetX;
+                        uControl.posY=e.offsetY;
+                        var $rect = $(document.createElementNS(SVG_NS, 'rect')) 
                         .attr({
-                            id:"rect"+rectCount,
+                            id:"rect"+uControl.rectCount,
                             x: e.offsetX,
                             y: e.offsetY, 
                             width: 0,
                             height: 0  
                         })
                         .css({  
-                            fill: "black", 
-                            "outline-style": "solid ",
-                            "outline-color":"red ",  
-                            "outline-width": "thin", 
-                            "outline-offset": "0px",   
+                            fill: "black",  
+                            "stroke":"red ",  
+                            "stroke-width":STROKE+"px",  
                         });
-                        dragElement($rect);  
-                        if(clickedRect!=null){
-                            BlueStrokeStyle(clickedRect);
-                            StrokeDasharrayStyle(clickedRect,2,2);
-                        }
-                        clickedRect=$rect;  
+                        assignRectEvents($rect);  
+                        if(uControl.selectedRect!=null){
+                            BlueStrokeStyle(uControl.selectedRect); 
+                        } 
                         $rect.appendTo("#multiScreenSvg"); 
+                        uControl.rectCount++;
+                        uControl.selectedRect=$rect;  
                     }
                     
                 } 
             }); 
  
             $("#multiScreenSvg").mouseleave(function(e){ 
-                if(!resizable)
+                if(!uControl.states.resizable)
                     document.body.style.cursor="default"; 
             });
-            
-            
+             
             $("#multiScreenSvg").mousemove(function(e){ 
                 
                 //console.log(e.offsetX+ " " +e.offsetY);  
-                if(clickedRect!=null){ 
-                    if(resizable&&!rectMouseOver&&!responsivePanelEntered)
+                if(uControl.selectedRect!=null){ 
+                    if(uControl.states.resizable&&!uControl.states.rectMouseOver&&!uControl.states.responsivePanelEntered)
                         hideResponsivePanels();
-                    if(!svgMouseDown){ 
-                        var $currentX=Number(e.offsetX); 
-                        var $currentY=Number(e.offsetY);
-                        var $x=Number( clickedRect.attr("x"));
-                        var $y=Number(clickedRect.attr("y"));
-                        var $width=Number(clickedRect.attr("width"));
-                        var $height=Number(clickedRect.attr("height")); 
+                    if(!uControl.states.svgMouseDown){ 
+                        var $currentPosX=Number(e.offsetX); 
+                        var $currentPosY=Number(e.offsetY);
+                        var $selectedRectX=Number(uControl.selectedRect.attr("x"));
+                        var $selectedRectY=Number(uControl.selectedRect.attr("y"));
+                        var $selectedRectWidth=Number(uControl.selectedRect.attr("width"));
+                        var $selectedRectHeight=Number(uControl.selectedRect.attr("height")); 
                         
-                        $topLine= $currentY <= $y+resizeCursorSensitive &&  $currentY+resizeCursorSensitive  >= $y ;
-                        $bottomLine=  $currentY >= ($y+$height)-resizeCursorSensitive &&  $currentY-resizeCursorSensitive <= ($y+$height);
-                        $leftLine=$currentX <= $x+resizeCursorSensitive &&  $currentX+resizeCursorSensitive  >= $x;
-                        $rightLine= $currentX >= ($x+$width)-resizeCursorSensitive && $currentX-resizeCursorSensitive <= ($x+$width) ;
+                        $topLine= $currentPosY <= $selectedRectY+RESİZE_CURSOR_SENSITIVE &&  $currentPosY+RESİZE_CURSOR_SENSITIVE  >= $selectedRectY ;
+                        $bottomLine=  $currentPosY >= ($selectedRectY+$selectedRectHeight)-RESİZE_CURSOR_SENSITIVE &&  $currentPosY-RESİZE_CURSOR_SENSITIVE <= ($selectedRectY+$selectedRectHeight);
+                        $leftLine=$currentPosX <= $selectedRectX+RESİZE_CURSOR_SENSITIVE &&  $currentPosX+RESİZE_CURSOR_SENSITIVE  >= $selectedRectX;
+                        $rightLine= $currentPosX >= ($selectedRectX+$selectedRectWidth)-RESİZE_CURSOR_SENSITIVE && $currentPosX-RESİZE_CURSOR_SENSITIVE <= ($selectedRectX+$selectedRectWidth) ;
 
-                        $heightLength= $currentY > ($y+10) && $currentY<($y+$height-10) ;
-                        $widthLength= $currentX > ($x+10) && $currentX<($x+$width-10) ;
+                        $heightLength= $currentPosY > ($selectedRectY+10) && $currentPosY<($selectedRectY+$selectedRectHeight-10) ;
+                        $widthLength= $currentPosX > ($selectedRectX+10) && $currentPosX<($selectedRectX+$selectedRectWidth-10) ;
                         
-                        if(!rectMouseDown){  
+                        if(!uControl.states.rectMouseDown){  
                             if( $leftLine && $topLine ){
                                 document.body.style.cursor="se-resize"; 
-                                resizeCursor=7;  
+                                uControl.states.resizeCursor=7;  
                             }
                             else if( $rightLine && $bottomLine ){
                                 document.body.style.cursor="se-resize";
-                                resizeCursor=3; 
+                                uControl.states.resizeCursor=3; 
                             }
                             else if(  $rightLine && $topLine){ 
                                 document.body.style.cursor="sw-resize";  
-                                resizeCursor=9; 
+                                uControl.states.resizeCursor=9; 
 
                             } 
                             else if( $leftLine &&  $bottomLine){
                                 document.body.style.cursor="sw-resize";  
-                                resizeCursor=1;      
+                                uControl.states.resizeCursor=1;      
                             }     
                             else if(  $bottomLine  && $widthLength ){
                                 document.body.style.cursor="s-resize";        
-                                resizeCursor=2;
+                                uControl.states.resizeCursor=2;
                             }
                             else if( $rightLine  && $heightLength ){
                                 document.body.style.cursor="e-resize";        
-                                resizeCursor=6;
+                                uControl.states.resizeCursor=6;
                             } 
                             else if(  $topLine  && $widthLength ){
                                 document.body.style.cursor="s-resize";        
-                                resizeCursor=8;
+                                uControl.states.resizeCursor=8;
                             }
                             else if(  $leftLine  && $heightLength ){
                                 document.body.style.cursor="e-resize";        
-                                resizeCursor=4;
+                                uControl.states.resizeCursor=4;
                             } 
                             else {
-                                if(rectMouseOver)
+                                if(uControl.states.rectMouseOver)
                                     document.body.style.cursor="pointer"; 
                                 else
                                     document.body.style.cursor="default"; 
-                                resizeCursor=0; 
+                                uControl.states.resizeCursor=0; 
                             } 
                         } 
                          
                     }
 
-                    if( resizable){  
-                        var $posX=e.offsetX;
-                        var $posY=e.offsetY;
-                        var $width=Number(clickedRect.attr("width"));    
-                        var $height=Number(clickedRect.attr("height"));    
-                        var $lenthDiffX=Math.abs($posX-clicked.posX);
-                        var $lenthDiffY=Math.abs($posY-clicked.posY);
-                        var x=Number(clickedRect.attr("x"));
-                        var y=Number(clickedRect.attr("y")); 
+                    if( uControl.states.resizable){  
+                        var $currentPosX=e.offsetX;
+                        var $currentPosY=e.offsetY;
+                        var $selectedRectWidth=Number(uControl.selectedRect.attr("width"));    
+                        var $selectedRectHeight=Number(uControl.selectedRect.attr("height"));    
+                        var $lenthDiffX=Math.abs($currentPosX-uControl.posX);
+                        var $lenthDiffY=Math.abs($currentPosY-uControl.posY);
+                        var x=Number(uControl.selectedRect.attr("x"));
+                        var y=Number(uControl.selectedRect.attr("y")); 
 
-                        if(resizeCursor==7){
-                            clickedRect.attr("x",x+($posX-clicked.posX));
-                            clickedRect.attr("y",y+($posY-clicked.posY));
-                            if($posX>clicked.posX)
-                                $width=$width-$lenthDiffX;
+                        if(uControl.states.resizeCursor==7){
+                            uControl.selectedRect.attr("x",x+($currentPosX-uControl.posX));
+                            uControl.selectedRect.attr("y",y+($currentPosY-uControl.posY));
+                            if($currentPosX>uControl.posX)
+                                $selectedRectWidth=$selectedRectWidth-$lenthDiffX;
                             else
-                                $width=$width+$lenthDiffX;
-                            if($posY>clicked.posY)
-                                $height=$height-$lenthDiffY; 
+                                $selectedRectWidth=$selectedRectWidth+$lenthDiffX;
+                            if($currentPosY>uControl.posY)
+                                $selectedRectHeight=$selectedRectHeight-$lenthDiffY; 
                             else
-                                $height=$height+$lenthDiffY;   
+                                $selectedRectHeight=$selectedRectHeight+$lenthDiffY;   
                         }
 
-                        if(resizeCursor==9){ 
-                            clickedRect.attr("y",y+($posY-clicked.posY));
-                            if($posX>clicked.posX)
-                                $width=$width+$lenthDiffX;
+                        if(uControl.states.resizeCursor==9){ 
+                            uControl.selectedRect.attr("y",y+($currentPosY-uControl.posY));
+                            if($currentPosX>uControl.posX)
+                                $selectedRectWidth=$selectedRectWidth+$lenthDiffX;
                             else
-                                $width=$width-$lenthDiffX;
-                            if($posY>clicked.posY)
-                                $height=$height-$lenthDiffY; 
+                                $selectedRectWidth=$selectedRectWidth-$lenthDiffX;
+                            if($currentPosY>uControl.posY)
+                                $selectedRectHeight=$selectedRectHeight-$lenthDiffY; 
                             else
-                                $height=$height+$lenthDiffY;                            
+                                $selectedRectHeight=$selectedRectHeight+$lenthDiffY;                            
                         }
 
-                        if(resizeCursor==1){
-                            clickedRect.attr("x",x+($posX-clicked.posX));
+                        if(uControl.states.resizeCursor==1){
+                            uControl.selectedRect.attr("x",x+($currentPosX-uControl.posX));
                             
-                            if ($posX>clicked.posX)
-                                $width=$width-$lenthDiffX;
+                            if ($currentPosX>uControl.posX)
+                                $selectedRectWidth=$selectedRectWidth-$lenthDiffX;
                             else
-                                $width=$width+$lenthDiffX;
-                            if ($posY>clicked.posY)
-                                $height=$height+$lenthDiffY; 
+                                $selectedRectWidth=$selectedRectWidth+$lenthDiffX;
+                            if ($currentPosY>uControl.posY)
+                                $selectedRectHeight=$selectedRectHeight+$lenthDiffY; 
                             else
-                                $height=$height-$lenthDiffY; 
+                                $selectedRectHeight=$selectedRectHeight-$lenthDiffY; 
                         }  
                         
-                        if(resizeCursor==3){ 
-                            if ($posX>clicked.posX)
-                                $width=$width+$lenthDiffX;
+                        if(uControl.states.resizeCursor==3){ 
+                            if ($currentPosX>uControl.posX)
+                                $selectedRectWidth=$selectedRectWidth+$lenthDiffX;
                             else
-                                $width=$width-$lenthDiffX;
-                            if ($posY>clicked.posY)
-                                $height=$height+$lenthDiffY; 
+                                $selectedRectWidth=$selectedRectWidth-$lenthDiffX;
+                            if ($currentPosY>uControl.posY)
+                                $selectedRectHeight=$selectedRectHeight+$lenthDiffY; 
                             else
-                                $height=$height-$lenthDiffY;
+                                $selectedRectHeight=$selectedRectHeight-$lenthDiffY;
                         } 
 
-                        if(resizeCursor==8){  
-                            clickedRect.attr("y",y+($posY-clicked.posY));
+                        if(uControl.states.resizeCursor==8){  
+                            uControl.selectedRect.attr("y",y+($currentPosY-uControl.posY));
                             
-                            if ($posY>clicked.posY){ 
-                                $height=$height-$lenthDiffY;  
+                            if ($currentPosY>uControl.posY){ 
+                                $selectedRectHeight=$selectedRectHeight-$lenthDiffY;  
                             }  
                             else{ 
-                                $height=$height+$lenthDiffY;  
+                                $selectedRectHeight=$selectedRectHeight+$lenthDiffY;  
                             }
                                 
                         }   
 
-                        if(resizeCursor==2){  
-                            if ($posY>clicked.posY)
-                                $height=$height+$lenthDiffY; 
+                        if(uControl.states.resizeCursor==2){  
+                            if ($currentPosY>uControl.posY)
+                                $selectedRectHeight=$selectedRectHeight+$lenthDiffY; 
                             else
-                                $height=$height-$lenthDiffY;                             
+                                $selectedRectHeight=$selectedRectHeight-$lenthDiffY;                             
                         } 
 
-                        if(resizeCursor==4){
-                            clickedRect.attr("x",x+($posX-clicked.posX));
+                        if(uControl.states.resizeCursor==4){
+                            uControl.selectedRect.attr("x",x+($currentPosX-uControl.posX));
                             
-                            if ($posX>clicked.posX)
-                                $width=$width-$lenthDiffX;
+                            if ($currentPosX>uControl.posX)
+                                $selectedRectWidth=$selectedRectWidth-$lenthDiffX;
                             else
-                                $width=$width+$lenthDiffX;                             
+                                $selectedRectWidth=$selectedRectWidth+$lenthDiffX;                             
                         }    
                         
-                        if(resizeCursor==6){
-                            if ($posX>clicked.posX)
-                                $width=$width+$lenthDiffX;
+                        if(uControl.states.resizeCursor==6){
+                            if ($currentPosX>uControl.posX)
+                                $selectedRectWidth=$selectedRectWidth+$lenthDiffX;
                             else
-                                $width=$width-$lenthDiffX;
+                                $selectedRectWidth=$selectedRectWidth-$lenthDiffX;
                         }   
-                        clickedRect.css("pointer-events","none"); 
-                        clickedRect.attr("width",$width );
-                        clickedRect.attr("height",$height);
-                        clicked.posX=$posX;
-                        clicked.posY=$posY;
+                        uControl.selectedRect.css("pointer-events","none"); 
+                        uControl.selectedRect.attr("width",$selectedRectWidth );
+                        uControl.selectedRect.attr("height",$selectedRectHeight);
+                        uControl.posX=$currentPosX;
+                        uControl.posY=$currentPosY;
                          
                         
                     }  
 
-                    else if(rectMouseDown){ 
-                        rectDragging=true; 
-                        var $x= Number(clickedRect.attr("x"));
-                        var $y= Number(clickedRect.attr("y"));
-                        var $lenthDiffX=e.offsetX - clicked.posX;
-                        var $lenthDiffY=e.offsetY - clicked.posY;  
+                    else if(uControl.states.rectMouseDown){ 
+                        uControl.states.rectDragging=true; 
+                        var $selectedRectX= Number(uControl.selectedRect.attr("x"));
+                        var $selectedRectY= Number(uControl.selectedRect.attr("y"));
+                        var $lenthDiffX=e.offsetX - uControl.posX;
+                        var $lenthDiffY=e.offsetY - uControl.posY;  
                     
-                        clickedRect.attr("x",($x+$lenthDiffX));
-                        clickedRect.attr("y",($y+$lenthDiffY));    
+                        uControl.selectedRect.attr("x",($selectedRectX+$lenthDiffX));
+                        uControl.selectedRect.attr("y",($selectedRectY+$lenthDiffY));    
                         
-                        clicked.posX=(e.offsetX) ;
-                        clicked.posY=(e.offsetY); 
+                        uControl.posX=(e.offsetX) ;
+                        uControl.posY=(e.offsetY); 
                     }
 
-                    else if(svgMouseDown ){  
+                    else if(uControl.states.svgMouseDown ){  
                     
-                        clickedRect.attr("x",clicked.posX);
-                        clickedRect.attr("y",clicked.posY);
-                        var $posX=e.offsetX;
-                        var $posY=e.offsetY;
+                        uControl.selectedRect.attr("x",uControl.posX);
+                        uControl.selectedRect.attr("y",uControl.posY);
+                        var $currentPosX=e.offsetX;
+                        var $currentPosY=e.offsetY;
                         
-                        if($posX<clicked.posX){
-                            clickedRect.attr("x",$posX); 
+                        if($currentPosX<uControl.posX){
+                            uControl.selectedRect.attr("x",$currentPosX); 
                         }  
-                        if($posY<clicked.posY) { 
-                            clickedRect.attr("y",$posY);
+                        if($currentPosY<uControl.posY) { 
+                            uControl.selectedRect.attr("y",$currentPosY);
                         } 
-                        clickedRect.attr("width",Math.abs($posX-clicked.posX));
-                        clickedRect.attr("height",Math.abs($posY-clicked.posY)); 
+                        uControl.selectedRect.attr("width",Math.abs($currentPosX-uControl.posX));
+                        uControl.selectedRect.attr("height",Math.abs($currentPosY-uControl.posY)); 
                     }  
                 }      
             });
-            
-            
+             
             $(window).on("mouseup",function(){
                 
-                if(clickedRect!=null){
-                    if(resizable){
-                        clickedRect.appendTo("#multiScreenSvg"); 
-                        clickedRect.css("pointer-events","auto");
+                if(uControl.selectedRect!=null){
+                    if(uControl.states.resizable){
+                        uControl.selectedRect.appendTo("#multiScreenSvg"); 
+                        uControl.selectedRect.css("pointer-events","auto");
                     }
                         
-                    RedStrokeStyle(clickedRect);
-                    StrokeDasharrayStyle(clickedRect,2,2); 
-                    var $width=Number(clickedRect.attr("width"));
-                    var $height=Number(clickedRect.attr("height"));
-                    var $x=Number(clickedRect.attr("x"));
-                    var $y=Number(clickedRect.attr("y"));
+                    RedStrokeStyle(uControl.selectedRect);
                     
-                    if(resizable ||svgMouseDown){
-                        if($x<1){
-                            clickedRect.attr("x",1);
-                            clickedRect.attr("width",(($x-1)+$width));
-                            $width=$width+$x;
-                            $x=1;
-                            
+                    var $selectedRectWidth=Number(uControl.selectedRect.attr("width"));
+                    var $selectedRectHeight=Number(uControl.selectedRect.attr("height"));
+                    var $selectedRectX=Number(uControl.selectedRect.attr("x"));
+                    var $selectedRectY=Number(uControl.selectedRect.attr("y"));
+                    
+                    if(uControl.states.resizable ||uControl.states.svgMouseDown){
+                        if($selectedRectX<screenPosX){
+                            uControl.selectedRect.attr("x",screenPosX);
+                            uControl.selectedRect.attr("width",(($selectedRectX-screenPosX)+$selectedRectWidth));
+                            $selectedRectWidth=$selectedRectWidth+$selectedRectX;
+                            $selectedRectX=screenPosX; 
                         }
-                        if(($x+$width)>682){  
-                            clickedRect.attr("width",682-$x) ;
+                        if(($selectedRectX+$selectedRectWidth)>screenWidth){  
+                            uControl.selectedRect.attr("width",screenWidth-$selectedRectX) ;
                         }    
-                        if($y<1){
-                            clickedRect.attr("y",1);
-                            clickedRect.attr("height",(($y-1)+$height )) ;
-                            $height=$height+$y;
-                            $y=1; 
+                        if($selectedRectY<screenPosY){
+                            uControl.selectedRect.attr("y",screenPosY);
+                            uControl.selectedRect.attr("height",(($selectedRectY-screenPosY)+$selectedRectHeight )) ;
+                            $selectedRectHeight=$selectedRectHeight+$selectedRectY;
+                            $selectedRectY=screenPosY; 
                         }
-                        if(($y+$height)>383){ 
-                            console.log("helppp"+$height);
-                            clickedRect.attr("height",383-$y) ;
+                        if(($selectedRectY+$selectedRectHeight)>screenHeight){ 
+                            console.log("helppp"+$selectedRectHeight);
+                            uControl.selectedRect.attr("height",screenHeight-$selectedRectY) ;
                         } 
                     }
                     
-                    if(svgMouseDown){  
-                        svgMouseDown=false;
-                        if(clickedRect.attr("width")<30||clickedRect.attr("height")<30){
-                            clickedRect.remove();
-                            clickedRect=null;
+                    if(uControl.states.svgMouseDown){  
+                        uControl.states.svgMouseDown=false; 
+                        if(uControl.selectedRect.attr("width")<CURRENT_DRAWING_WIDTH||uControl.selectedRect.attr("height")<CURRENT_DRAWING_HEIGHT){
+                            uControl.selectedRect.remove();
+                            uControl.selectedRect=null;
+                            uControl.rectCount--;
                         } 
-                        else
-                            rectCount++;
                     }   
 
-                    if(rectDragging){
-                        if($x<1){
-                            clickedRect.attr("x",1); 
+                    if(uControl.states.rectDragging){
+                        if($selectedRectX<screenPosX){
+                            uControl.selectedRect.attr("x",screenPosX); 
                         }
-                        else if(($x+$width)>682){  
-                            clickedRect.attr("x",682-$width) ;
+                        else if(($selectedRectX+$selectedRectWidth)>screenWidth){  
+                            uControl.selectedRect.attr("x",screenWidth-$selectedRectWidth) ;
                         }    
-                        if($y<1){
-                            clickedRect.attr("y",1); 
+                        if($selectedRectY<screenPosY){
+                            uControl.selectedRect.attr("y",screenPosY); 
                         }
-                        if(($y+$height)>383){ 
-                            clickedRect.attr("y",383-$height) ;
+                        if(($selectedRectY+$selectedRectHeight)>screenHeight){ 
+                            uControl.selectedRect.attr("y",screenHeight-$selectedRectHeight) ;
                         }
-                    }  
-
-                    
-                }  
-                
+                    }   
+                }   
                 document.body.style.cursor="default"; 
-                rectMouseDown=false;  
-                rectDragging=false;
-                resizable=false; 
-                resizeCursor=0; 
-                responsivePanelEntered=false;
-                responsivePanelShow=false;
+                uControl.states.rectMouseDown=false;  
+                uControl.states.rectDragging=false;
+                uControl.states.resizable=false; 
+                uControl.states.resizeCursor=0; 
+                uControl.states.responsivePanelEntered=false;
+                uControl.states.responsivePanelShow=false;
                 hideResponsivePanels();
                 
             }); 
-              
-
+               
             function RedStrokeStyle($elmnt){
                 $elmnt.css({
-                    "outline-color":"red "
+                    "stroke":"red "
                 }); 
             }
             function BlueStrokeStyle($elmnt){
                 $elmnt.css({
-                    "outline-color":"blue "
+                    "stroke":"blue "
                 }); 
             } 
-            function StrokeDasharrayStyle($elmnt,part1,part2){
-                $elmnt.css({
-                   // "outline-style": "dashed "
-                }); 
-            }
-
             
-
-            function dragElement($elmnt){   
+            function assignRectEvents($elmnt){   
                 $elmnt.mouseleave(function(e){ 
-                    rectMouseOver=false;  
+                    uControl.states.rectMouseOver=false;  
                 });
 
                 $elmnt.mousedown(function(e){
                     console.log("gedlii"); 
-                    if(resizeCursor==0){
-                        resizable=false;  
+                    if(uControl.states.resizeCursor==0){
+                        uControl.states.resizable=false;  
                     }  
                     else{
-                        resizable=true;
+                        uControl.states.resizable=true;
                     }  
 
-                    if(!rectMouseDown&&!resizable){  
-                        rectMouseDown=true; 
-                        if(clickedRect!=null){
-                            BlueStrokeStyle(clickedRect);
-                            StrokeDasharrayStyle(clickedRect,2,2); 
+                    if(!uControl.states.rectMouseDown&&!uControl.states.resizable){  
+                        uControl.states.rectMouseDown=true; 
+                        if(uControl.selectedRect!=null){
+                            BlueStrokeStyle(uControl.selectedRect); 
                         }   
-                        clickedRect=$(this); 
-                        RedStrokeStyle(clickedRect);
-                        StrokeDasharrayStyle(clickedRect,0,0); 
-                        clickedRect.appendTo("#multiScreenSvg"); 
+                        uControl.selectedRect=$(this); 
+                        RedStrokeStyle(uControl.selectedRect); 
+                        uControl.selectedRect.appendTo("#multiScreenSvg"); 
                     } 
-                    clicked.posX=e.offsetX;
-                    clicked.posY=e.offsetY; 
+                    uControl.posX=e.offsetX;
+                    uControl.posY=e.offsetY; 
                 }); 
 
                 $elmnt.mousemove(function(e){  
-                    rectMouseOver=true; 
-                    if(resizable&&$(this).attr("id")!=clickedRect.attr("id")){ 
+                    uControl.states.rectMouseOver=true; 
+                    if(uControl.states.resizable&&$(this).attr("id")!=uControl.selectedRect.attr("id")){ 
                         $(this).appendTo("#multiScreenSvg");
-                        clickedRect.appendTo("#multiScreenSvg");
+                        uControl.selectedRect.appendTo("#multiScreenSvg");
                         showResponsivePanelOnRect($elmnt);
                     }
                 });
